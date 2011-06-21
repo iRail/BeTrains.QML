@@ -6,7 +6,6 @@ import "js/irail.js" as Script
 Window {
     id: root
 
-
     //
     // Window structure
     //
@@ -16,20 +15,50 @@ Window {
         anchors.top: root.top
     }
 
-    Demo {
-        id: demo
-        state: "shown"
-        y: statusBar.height
-        width: parent.width
-        height: parent.height
+    TabBar {
+        id: tabBar
+        anchors { left: parent.left; right: parent.right; top: statusBar.bottom }
+        TabButton { tab: tab1content; text: "Favs" }
+        TabButton { tab: tab2content; text: "Planner" }
+        TabButton { tab: tab3content; text: "Demo" }
     }
 
-    Planner {
-        id: planner
-        state: "hidden"
-        y: statusBar.height
-        width: parent.width
-        height: parent.height
+    TabGroup {
+        id: tabGroup
+        anchors { left: parent.left; right: parent.right; top: statusBar.bottom; bottom: parent.bottom }
+
+        // define the content for tab 1
+        Page {
+            id: tab1content
+            Text {
+                anchors.centerIn: parent
+                text: "Tab 1 content"
+                font.pointSize: 25
+                color: "white"
+            }
+        }
+
+        // define the content for tab 2
+        Page {
+            id: tab2content
+            Text {
+                anchors.centerIn: parent
+                text: "Tab 2 content"
+                font.pointSize: 25
+                color: "pink"
+            }
+        }
+
+        // define content for tab 3
+        Page {
+            id: tab3content
+            Text {
+                anchors.centerIn: parent
+                text: "Tab 3 content"
+                font.pointSize: 25
+                color: "cyan"
+            }
+        }
     }
 
     ToolBar {
@@ -49,6 +78,8 @@ Window {
             ToolButton {
                 iconSource: "toolbar-menu"
                 onClicked: {
+                    if (!menu)
+                        menu = menuComponent.createObject(root)
                     menu.open()
                 }
             }
@@ -57,46 +88,36 @@ Window {
 
 
     //
-    // Components
+    // Dynamic components
     //
 
-    function hideAll() {
-        demo.state = "hidden"
-        planner.state = "hidden"
-    }
+    property Menu menu
+    Component {
+        id: menuComponent
 
-    Menu {
-        id: menu
-        content: MenuLayout {
-
-            // Demo
-            MenuItem {
-                text: "Demo"
-                onClicked: {
-                    hideAll()
-                    demo.state = "shown"
+        Menu {
+            id: menu
+            content: MenuLayout {
+                // About
+                MenuItem {
+                    text: "About"
+                    onClicked: {
+                        if (!about)
+                            about = aboutComponent.createObject(menu)
+                        about.open()
+                    }
                 }
             }
-
-            // Planner
-            MenuItem {
-                text: "Planner"
-                onClicked: {
-                    hideAll()
-                    planner.state = "shown"
-                }
-            }
-
-            // About
-            MenuItem {
-                text: "About"
-                onClicked: {
-                    about.open()
-                }
-            }
-
-            // Exit
-            MenuItem { text: "Exit"; onClicked: Qt.quit() }
         }
     }
+
+    property Dialog about
+    Component {
+        id: aboutComponent
+
+        AboutDialog {
+
+        }
+    }
+
 }
