@@ -2,7 +2,7 @@ import QtQuick 1.0
 import com.nokia.symbian 1.1
 
 Column {
-    id: column
+    id: root
     spacing: 14
 
 
@@ -10,13 +10,31 @@ Column {
     // Contents
     //
 
-    Row {
-        id: origin
+    Column {
+        id: contents
+        spacing: 14
 
-        TextField {
-            placeholderText: "Station"
+        anchors {
+            left: parent.left
+            right: parent.right
+            margins: root.spacing
         }
+        Row {
+            id: origin
 
+            Text {
+                id: originLabel
+                anchors.verticalCenter: parent.verticalCenter
+                font { family: platformStyle.fontFamilyRegular; pixelSize: platformStyle.fontSizeMedium }
+                color: platformStyle.colorNormalLight
+                text: "Origin: "
+            }
+
+            TextField {
+                placeholderText: "Station"
+            }
+
+        }
     }
 
 
@@ -28,21 +46,21 @@ Column {
         State {
             name: "hidden"
             PropertyChanges {
-                target: column
+                target: root
                 x: parent.width
             }
         },
         State {
             name: "hiddenLeft"
             PropertyChanges {
-                target: column
+                target: root
                 x: -parent.width
             }
         },
         State {
             name: "shown"
             PropertyChanges {
-                target: column
+                target: root
                 x: 0
             }
         }
@@ -52,7 +70,7 @@ Column {
         Transition {
             SequentialAnimation {
                 PropertyAnimation {
-                    target: column
+                    target: root
                     properties: "x"
                     duration: 300
                     easing.type: "InOutQuad"
