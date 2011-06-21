@@ -663,48 +663,6 @@ Flickable {
            Button { text: "b7" }
        }
     }
-
-
-    //
-    // States and transitions
-    //
-
-    states: [
-        State {
-            name: "hidden"
-            PropertyChanges {
-                target: flickable
-                x: parent.width
-            }
-        },
-        State {
-            name: "hiddenLeft"
-            PropertyChanges {
-                target: flickable
-                x: -parent.width
-            }
-        },
-        State {
-            name: "shown"
-            PropertyChanges {
-                target: flickable
-                x: 0
-            }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            SequentialAnimation {
-                PropertyAnimation {
-                    target: flickable
-                    properties: "x"
-                    duration: 300
-                    easing.type: "InOutQuad"
-                }
-            }
-        }
-    ]
 }
 
 

@@ -18,18 +18,17 @@ Window {
     TabBar {
         id: tabBar
         anchors { left: parent.left; right: parent.right; top: statusBar.bottom }
-        TabButton { tab: tab1content; text: "Favs" }
-        TabButton { tab: tab2content; text: "Planner" }
-        TabButton { tab: tab3content; text: "Demo" }
+        TabButton { tab: tabFavourites; text: "Favs" }
+        TabButton { tab: tabPlanner; text: "Planner" }
+        TabButton { tab: tabLiveboard; text: "Liveboard" }
     }
 
     TabGroup {
         id: tabGroup
-        anchors { left: parent.left; right: parent.right; top: statusBar.bottom; bottom: parent.bottom }
+        anchors { left: parent.left; right: parent.right; top: tabBar.bottom; bottom: parent.bottom }
 
-        // define the content for tab 1
         Page {
-            id: tab1content
+            id: tabFavourites
             Text {
                 anchors.centerIn: parent
                 text: "Tab 1 content"
@@ -38,25 +37,17 @@ Window {
             }
         }
 
-        // define the content for tab 2
         Page {
-            id: tab2content
-            Text {
-                anchors.centerIn: parent
-                text: "Tab 2 content"
-                font.pointSize: 25
-                color: "pink"
+            id: tabPlanner
+            Planner {
+                anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             }
         }
 
-        // define content for tab 3
         Page {
-            id: tab3content
-            Text {
-                anchors.centerIn: parent
-                text: "Tab 3 content"
-                font.pointSize: 25
-                color: "cyan"
+            id: tabLiveboard
+            Demo {
+                anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             }
         }
     }
