@@ -18,25 +18,18 @@ Window {
 
     Demo {
         id: demo
-        state: "hidden"
-        anchors {
-            left: root.left
-            right: root.right
-            top: statusBar.visible ? statusBar.bottom: root.top
-            bottom: toolBar.visible ? toolBar.top: root.bottom
-        }
+        state: "shown"
+        y: statusBar.height
+        width: parent.width
+        height: parent.height
     }
 
     Planner {
         id: planner
         state: "hidden"
-
-        anchors {
-            left: root.left
-            right: root.right
-            top: statusBar.visible ? statusBar.bottom: root.top
-            bottom: toolBar.visible ? toolBar.top: root.bottom
-        }
+        y: statusBar.height
+        width: parent.width
+        height: parent.height
     }
 
     ToolBar {
