@@ -1,7 +1,6 @@
 import "components"
 import QtQuick 1.0
 import com.nokia.symbian 1.1
-import "js/irail.js" as Script
 
 Window {
     id: root

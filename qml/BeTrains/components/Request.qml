@@ -3,13 +3,7 @@ import com.nokia.symbian 1.1
 
 Page {
     id: page
-
-    anchors {
-        left: parent.left
-        right: parent.right
-        top: parent.top
-        bottom: parent.bottom
-    }
+    anchors.fill: parent
 
 
     //
@@ -29,7 +23,8 @@ Page {
 
         // Make request
         ToolButton {
-            text: "next page";
+            iconSource: "toolbar-search"
+            enabled: false
             onClicked: pageStack.push(secondPage)
         }
     }
@@ -48,6 +43,7 @@ Page {
             right: parent.right
             margins: contents.spacing
         }
+
         Row {
             id: origin
 

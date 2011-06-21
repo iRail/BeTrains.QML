@@ -3,13 +3,7 @@ import com.nokia.symbian 1.1
 
 Page {
     id: page
-
-    anchors {
-        left: parent.left
-        right: parent.right
-        top: parent.top
-        bottom: parent.bottom
-    }
+    anchors.fill: parent
 
 
     //
