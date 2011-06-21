@@ -16,6 +16,29 @@ Window {
         anchors.top: root.top
     }
 
+    Demo {
+        id: demo
+        state: "hidden"
+        anchors {
+            left: root.left
+            right: root.right
+            top: statusBar.visible ? statusBar.bottom: root.top
+            bottom: toolBar.visible ? toolBar.top: root.bottom
+        }
+    }
+
+    Planner {
+        id: planner
+        state: "hidden"
+
+        anchors {
+            left: root.left
+            right: root.right
+            top: statusBar.visible ? statusBar.bottom: root.top
+            bottom: toolBar.visible ? toolBar.top: root.bottom
+        }
+    }
+
     ToolBar {
         id: toolBar
         anchors.bottom: root.bottom
@@ -33,8 +56,6 @@ Window {
             ToolButton {
                 iconSource: "toolbar-menu"
                 onClicked: {
-                    if (!menu)
-                        menu = menuComponent.createObject(root)
                     menu.open()
                 }
             }
@@ -43,100 +64,46 @@ Window {
 
 
     //
-    // Dynamic components
+    // Components
     //
-
-    property Menu menu
-    property Dialog about
-    property Column demo
-    property Column planner
-
 
     function hideAll() {
         demo.state = "hidden"
         planner.state = "hidden"
     }
 
+    Menu {
+        id: menu
+        content: MenuLayout {
 
-    Component {
-        id: menuComponent
-
-        Menu {
-            content: MenuLayout {
-
-                // Demo
-                MenuItem {
-                    text: "Demo"
-                    onClicked: {
-                        if (!demo)
-                            demo = demoComponent.createObject(menu)
-                        hideAll()
-                        demo.state = "shown"
-                    }
+            // Demo
+            MenuItem {
+                text: "Demo"
+                onClicked: {
+                    hideAll()
+                    demo.state = "shown"
                 }
+            }
 
-                // Planner
-                MenuItem {
-                    text: "Planner"
-                    onClicked: {
-                        if (!planner)
-                            planner = plannerComponent.createObject(menu)
-                        hideAll()
-                        planner.state = "shown"
-                    }
+            // Planner
+            MenuItem {
+                text: "Planner"
+                onClicked: {
+                    hideAll()
+                    planner.state = "shown"
                 }
+            }
 
-                // About
-                MenuItem {
-                    text: "About"
-                    onClicked: {
-                        if (!about)
-                            about = aboutComponent.createObject(menu)
-                        about.open()
-                    }
+            // About
+            MenuItem {
+                text: "About"
+                onClicked: {
+                    about.open()
                 }
-
-                // Exit
-                MenuItem { text: "Exit"; onClicked: Qt.quit() }
             }
-        }
-    }
 
-    Component {
-        id: aboutComponent
-
-        AboutDialog {
-            id: about
-        }
-    }
-
-    Component {
-        id: demoComponent
-
-        Demo {
-            id: demo
-
-            anchors {
-                left: root.left
-                right: root.right
-                top: statusBar.visible ? statusBar.bottom: root.top
-                bottom: toolBar.visible ? toolBar.top: root.bottom
-            }
-        }
-    }
-
-    Component {
-        id: plannerComponent
-
-        Planner {
-            id: planner
-
-            anchors {
-                left: root.left
-                right: root.right
-                top: statusBar.visible ? statusBar.bottom: root.top
-                bottom: toolBar.visible ? toolBar.top: root.bottom
-            }
+            // Exit
+            MenuItem { text: "Exit"; onClicked: Qt.quit() }
         }
     }
 }

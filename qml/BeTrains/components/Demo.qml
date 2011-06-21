@@ -43,11 +43,9 @@ import com.nokia.symbian 1.1
 import Qt.labs.components 1.1
 
 
-
 Flickable {
     id: flickable
     clip: true
-
     contentHeight: column.height
 
 
@@ -675,21 +673,21 @@ Flickable {
         State {
             name: "hidden"
             PropertyChanges {
-                target: friendsList
+                target: flickable
                 x: parent.width
             }
         },
         State {
             name: "hiddenLeft"
             PropertyChanges {
-                target: friendsList
+                target: flickable
                 x: -parent.width
             }
         },
         State {
             name: "shown"
             PropertyChanges {
-                target: friendsList
+                target: flickable
                 x: 0
             }
         }
@@ -699,7 +697,7 @@ Flickable {
         Transition {
             SequentialAnimation {
                 PropertyAnimation {
-                    target: friendsList
+                    target: flickable
                     properties: "x"
                     duration: 300
                     easing.type: "InOutQuad"
