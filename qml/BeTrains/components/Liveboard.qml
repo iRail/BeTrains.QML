@@ -1,9 +1,32 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.1
 
-Column {
-    id: root
-    spacing: 14
+Page {
+    id: page
+
+    anchors {
+        left: parent.left
+        right: parent.right
+        top: parent.top
+        bottom: parent.bottom
+    }
+
+
+    //
+    // Toolbar
+    //
+
+    tools: ToolBarLayout {
+        id: pageSpecificTools
+
+        // Quit buton
+        // TODO: quit logo
+        ToolButton {
+            flat: true
+            iconSource: "toolbar-back"
+            onClicked: Qt.quit()
+        }
+    }
 
 
     //
@@ -17,7 +40,7 @@ Column {
         anchors {
             left: parent.left
             right: parent.right
-            margins: root.spacing
+            margins: contents.spacing
         }
         Row {
             id: origin
@@ -27,11 +50,7 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 font { family: platformStyle.fontFamilyRegular; pixelSize: platformStyle.fontSizeMedium }
                 color: platformStyle.colorNormalLight
-                text: "Origin: "
-            }
-
-            TextField {
-                placeholderText: "Station"
+                text: "Liveboard screen"
             }
 
         }

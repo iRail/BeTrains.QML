@@ -18,9 +18,9 @@ Window {
     TabBar {
         id: tabBar
         anchors { left: parent.left; right: parent.right; top: statusBar.bottom }
-        TabButton { tab: tabFavourites; text: "Favs" }
-        TabButton { tab: tabPlanner; text: "Planner" }
-        TabButton { tab: tabLiveboard; text: "Liveboard" }
+        TabButton { tab: homeTab; text: "Home" }
+        TabButton { tab: plannerTab; text: "Planner" }
+        TabButton { tab: liveboardTab; text: "Liveboard" }
     }
 
     TabGroup {
@@ -28,51 +28,59 @@ Window {
         anchors { left: parent.left; right: parent.right; top: tabBar.bottom; bottom: parent.bottom }
 
         Page {
-            id: tabFavourites
-            Text {
-                anchors.centerIn: parent
-                text: "Tab 1 content"
-                font.pointSize: 25
-                color: "white"
-            }
-        }
+            id: homeTab
 
-        Page {
-            id: tabPlanner
-            Planner {
-                anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            }
-        }
+            PageStack {
+                id: homeStack
+                toolBar: homeTools
 
-        Page {
-            id: tabLiveboard
-            Demo {
-                anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            }
-        }
-    }
-
-    ToolBar {
-        id: toolBar
-        anchors.bottom: root.bottom
-        tools: ToolBarLayout {
-            id: toolBarlayout
-
-            // Back buton
-            ToolButton {
-                flat: true
-                iconSource: "toolbar-back"
-                onClicked: Qt.quit()
-            }
-
-            // Menu entry
-            ToolButton {
-                iconSource: "toolbar-menu"
-                onClicked: {
-                    if (!menu)
-                        menu = menuComponent.createObject(root)
-                    menu.open()
+                Component.onCompleted: {
+                    home = homeComponent.createObject(homeStack)
+                    homeStack.push(home)
                 }
+            }
+
+            ToolBar {
+                id: homeTools
+                anchors { bottom: parent.bottom }
+            }
+        }
+
+        Page {
+            id: plannerTab
+
+            PageStack {
+                id: plannerStack
+                toolBar: plannerTools
+
+                Component.onCompleted: {
+                    request = requestComponent.createObject(plannerStack)
+                    plannerStack.push(request)
+                }
+            }
+
+            ToolBar {
+                id: plannerTools
+                anchors { bottom: parent.bottom }
+            }
+        }
+
+        Page {
+            id: liveboardTab
+
+            PageStack {
+                id: liveboardStack
+                toolBar: liveboardTools
+
+                Component.onCompleted: {
+                    liveboard = liveboardComponent.createObject(liveboardStack)
+                    liveboardStack.push(liveboard)
+                }
+            }
+
+            ToolBar {
+                id: liveboardTools
+                anchors { bottom: parent.bottom }
             }
         }
     }
@@ -82,33 +90,27 @@ Window {
     // Dynamic components
     //
 
-    property Menu menu
+    property Page home
     Component {
-        id: menuComponent
-
-        Menu {
-            id: menu
-            content: MenuLayout {
-                // About
-                MenuItem {
-                    text: "About"
-                    onClicked: {
-                        if (!about)
-                            about = aboutComponent.createObject(menu)
-                        about.open()
-                    }
-                }
-            }
+        id: homeComponent
+        Home {
+            id: home
         }
     }
 
-    property Dialog about
+    property Page request
     Component {
-        id: aboutComponent
-
-        AboutDialog {
-
+        id: requestComponent
+        Request {
+            id: request
         }
     }
 
+    property Page liveboard
+    Component {
+        id: liveboardComponent
+        Liveboard {
+            id: liveboard
+        }
+    }
 }
