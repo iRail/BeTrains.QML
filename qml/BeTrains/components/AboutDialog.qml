@@ -2,7 +2,7 @@ import QtQuick 1.0
 import com.nokia.symbian 1.1
 
 QueryDialog {
-    id: aboutDialog
+    id: dialog
     titleText: "About BeTrains"
     message: "<p>"
              + "<strong>BeTrains</strong> is part of the <a href=\"http://betrains.com\">BeTrains</a> project, and made possible by:"

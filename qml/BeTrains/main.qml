@@ -4,14 +4,7 @@ import com.nokia.symbian 1.1
 import "js/irail.js" as Script
 
 Window {
-    //
-    // Configuration
-    //
-
     id: root
-
-    property Menu menu
-    property Dialog about
 
 
     //
@@ -21,31 +14,6 @@ Window {
     StatusBar {
         id: statusBar
         anchors.top: root.top
-    }
-
-    Flickable {
-        id: flickable
-        clip: true
-        anchors {
-            left: root.left
-            right: root.right
-            top: statusBar.visible ? statusBar.bottom: root.top
-            bottom: toolBar.visible ? toolBar.top: root.bottom
-        }
-        contentHeight: column.height
-
-        SampleColumn {
-            id: column
-            anchors {
-                left: parent.left
-                right: parent.right
-                margins: column.spacing
-            }
-        }
-    }
-
-    ScrollDecorator {
-        flickableItem: flickable
     }
 
     ToolBar {
@@ -78,6 +46,61 @@ Window {
     // Dynamic components
     //
 
+    property Menu menu
+    property Dialog about
+    property Column demo
+    property Column planner
+
+
+    function hideAll() {
+        demo.state = "hidden"
+        planner.state = "hidden"
+    }
+
+
+    Component {
+        id: menuComponent
+
+        Menu {
+            content: MenuLayout {
+
+                // Demo
+                MenuItem {
+                    text: "Demo"
+                    onClicked: {
+                        if (!demo)
+                            demo = demoComponent.createObject(menu)
+                        hideAll()
+                        demo.state = "shown"
+                    }
+                }
+
+                // Planner
+                MenuItem {
+                    text: "Planner"
+                    onClicked: {
+                        if (!planner)
+                            planner = plannerComponent.createObject(menu)
+                        hideAll()
+                        planner.state = "shown"
+                    }
+                }
+
+                // About
+                MenuItem {
+                    text: "About"
+                    onClicked: {
+                        if (!about)
+                            about = aboutComponent.createObject(menu)
+                        about.open()
+                    }
+                }
+
+                // Exit
+                MenuItem { text: "Exit"; onClicked: Qt.quit() }
+            }
+        }
+    }
 
     Component {
         id: aboutComponent
@@ -88,19 +111,31 @@ Window {
     }
 
     Component {
-        id: menuComponent
+        id: demoComponent
 
-        Menu {
-            content: MenuLayout {
-                MenuItem {
-                    text: "About"
-                    onClicked: {
-                        if (!about)
-                            about = aboutComponent.createObject(menu)
-                        about.open()
-                    }
-                }
-                MenuItem { text: "Exit"; onClicked: Qt.quit() }
+        Demo {
+            id: demo
+
+            anchors {
+                left: root.left
+                right: root.right
+                top: statusBar.visible ? statusBar.bottom: root.top
+                bottom: toolBar.visible ? toolBar.top: root.bottom
+            }
+        }
+    }
+
+    Component {
+        id: plannerComponent
+
+        Planner {
+            id: planner
+
+            anchors {
+                left: root.left
+                right: root.right
+                top: statusBar.visible ? statusBar.bottom: root.top
+                bottom: toolBar.visible ? toolBar.top: root.bottom
             }
         }
     }
