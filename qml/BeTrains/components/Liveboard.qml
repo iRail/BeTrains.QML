@@ -35,7 +35,11 @@ Page {
     //
 
     ListView {
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            margins: platformStyle.paddingMedium
+        }
+
         clip: true
         id: liveboardView
         model: liveboardModel
@@ -96,11 +100,9 @@ Page {
                     id: searchDialog
 
                     onAccepted: {
-                        stationName.text = searchDialog.model.get(searchDialog.selectedIndex).name
+                        stationName.text = searchDialog.station
                         stationName.forceActiveFocus()
                     }
-
-                    onRejected: selectedIndex = -1
                 }
             }
 
