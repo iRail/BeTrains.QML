@@ -27,8 +27,16 @@ Page {
         // Make request
         ToolButton {
             iconSource: "toolbar-search"
-            enabled: false
-            onClicked: pageStack.push(secondPage)
+            enabled: originField.text !== "" && destinationField.text !== ""
+            onClicked: {
+                pageStack.push(connectionsComponent, {
+                               origin: originField.text,
+                               destination: destinationField.text,
+                               usedatetime: datetimeCheck.checked,
+                               datetime: datetime,
+                               ready: true
+            });
+            }
         }
     }
 
@@ -54,13 +62,14 @@ Page {
                 width: parent.width - swapButton.width - platformStyle.paddingMedium
 
                 StationField {
-                    id: origin
+                    id: originField
                     placeholderText: "Origin..."
                     width: parent.width
+                    KeyNavigation.tab: destinationField
                 }
 
                 StationField {
-                    id: destination
+                    id: destinationField
                     placeholderText: "Destination..."
                     width: parent.width
                 }
@@ -74,9 +83,9 @@ Page {
                 text: "Swap"
 
                 onClicked: {
-                    var temp = destination.text
-                    destination.text = origin.text
-                    origin.text = temp
+                    var temp = destinationField.text
+                    destinationField.text = originField.text
+                    originField.text = temp
                     swapButton.focus = true
                 }
             }
@@ -155,6 +164,17 @@ Page {
                 onClicked: timeDialog.open()
             }
         }
+    }
 
+
+    //
+    // Dynamic components
+    //
+
+    Component {
+        id: connectionsComponent
+        ConnectionsPage {
+            id: connections
+        }
     }
 }

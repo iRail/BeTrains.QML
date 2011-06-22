@@ -141,10 +141,9 @@ Page {
     // Dynamic components
     //
 
-    property Page vehicle
     Component {
         id: vehicleComponent
-        Vehicle {
+        VehiclePage {
             id: vehicle
         }
     }

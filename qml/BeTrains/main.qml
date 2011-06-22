@@ -34,8 +34,7 @@ Window {
                 toolBar: homeTools
 
                 Component.onCompleted: {
-                    home = homeComponent.createObject(homeStack)
-                    homeStack.push(home)
+                    homeStack.push(homeComponent)
                 }
             }
 
@@ -53,8 +52,7 @@ Window {
                 toolBar: plannerTools
 
                 Component.onCompleted: {
-                    request = requestComponent.createObject(plannerStack)
-                    plannerStack.push(request)
+                    plannerStack.push(requestComponent)
                 }
             }
 
@@ -72,8 +70,7 @@ Window {
                 toolBar: liveboardTools
 
                 Component.onCompleted: {
-                    liveboard = liveboardComponent.createObject(liveboardStack)
-                    liveboardStack.push(liveboard)
+                    liveboardStack.push(liveboardComponent)
                 }
             }
 
@@ -89,26 +86,23 @@ Window {
     // Dynamic components
     //
 
-    property Page home
     Component {
         id: homeComponent
-        Home {
+        HomePage {
             id: home
         }
     }
 
-    property Page request
     Component {
         id: requestComponent
-        Request {
+        RequestPage {
             id: request
         }
     }
 
-    property Page liveboard
     Component {
         id: liveboardComponent
-        Liveboard {
+        LiveboardPage {
             id: liveboard
         }
     }
