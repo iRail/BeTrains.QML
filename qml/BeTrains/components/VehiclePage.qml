@@ -20,13 +20,6 @@ Page {
             iconSource: "toolbar-back"
             onClicked: pageStack.pop()
         }
-
-        // Refresh
-        ToolButton {
-            id: refreshButton
-            iconSource: "toolbar-refresh"
-            onClicked: vehicleModel.reload()
-        }
     }
 
 
@@ -78,14 +71,6 @@ Page {
                     role: "Title"
                     text: station
                 }
-                /*
-                ListItemText {
-                    id: platformText
-                    mode: item.mode
-                    role: "SubTitle"
-                    text: "Platform " + platform
-                }
-                */
             }
             Column {
                 anchors.right: parent.right

@@ -80,7 +80,7 @@ Page {
                 id: swapButton
                 height: stationColumn.height
                 anchors.right: parent.right
-                text: "Swap"
+                iconSource: "../icons/swap.png"
 
                 onClicked: {
                     var temp = destinationField.text
