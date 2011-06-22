@@ -74,7 +74,35 @@ Page {
         TextField {
             anchors { left: parent.left; right: parent.right; }
             id: stationName
-            placeholderText: "station"
+            placeholderText: "Station..."
+            platformLeftMargin: search.width + platformStyle.paddingSmall
+
+            Image {
+                id: searchImage
+                anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
+                smooth: true
+                fillMode: Image.PreserveAspectFit
+                source: "image://theme/qtg_graf_search_indicator"
+                height: parent.height - platformStyle.paddingMedium * 2
+                width: parent.height - platformStyle.paddingMedium * 2
+
+                MouseArea {
+                    id: search
+                    anchors.fill: parent
+                    onClicked: searchDialog.open()
+                }
+
+                StationChooser {
+                    id: searchDialog
+
+                    onAccepted: {
+                        stationName.text = searchDialog.model.get(searchDialog.selectedIndex).name
+                        stationName.forceActiveFocus()
+                    }
+
+                    onRejected: selectedIndex = -1
+                }
+            }
 
             DelayedPropagator {
                 id: inactivityTracker
