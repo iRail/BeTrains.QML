@@ -11,7 +11,7 @@ Page {
     //
 
     tools: ToolBarLayout {
-        id: pageSpecificTools
+        id: toolBar
 
         // Quit buton
         // TODO: quit logo
@@ -21,19 +21,11 @@ Page {
             onClicked: Qt.quit()
         }
 
-        // Refresg
+        // Refresh
         ToolButton {
+            id: refreshButton
             iconSource: "toolbar-refresh"
-            enabled: false
-            onClicked: pageStack.push(secondPage)
-        }
-
-        // Make request
-        ToolButton {
-            iconSource: "toolbar-search"
-            enabled: stationName.text !== ""
-            onClicked: {
-            }
+            onClicked: liveboardModel.reload()
         }
     }
 
@@ -59,23 +51,44 @@ Page {
     XmlListModel {
         id: liveboardModel
 
-        source: "http://api.irail.be/liveboard.php?station=gent"
+        property string station
+        onStationChanged: {
+            if (station !== "")
+                source = "http://api.irail.be/liveboard.php?station=" + station
+            else
+                source = ""
+        }
+
+        source: ""
         query: "/liveboard/departures/departure"
 
-        XmlRole { name: "station"; query: "station/string()" }
-        XmlRole { name: "time"; query: "time/string()" }
+        XmlRole { name: "destination"; query: "station/string()"; isKey: true}
+        XmlRole { name: "time"; query: "time/string()"; isKey: true }
+        XmlRole { name: "vehicle"; query: "vehicle/string()"; isKey: true }
         XmlRole { name: "delay"; query: "@delay/string()" }
-        XmlRole { name: "vehicle"; query: "vehicle/string()" }
         XmlRole { name: "platform"; query: "platform/string()" }
     }
 
     Component {
         id: liveboardHeader
-
         TextField {
             anchors { left: parent.left; right: parent.right; }
             id: stationName
             placeholderText: "station"
+
+            DelayedPropagator {
+                id: inactivityTracker
+                delay: 500
+            }
+            Binding {
+                target: inactivityTracker; property: 'input'
+                value: text
+            }
+            Binding {
+                target: liveboardModel; property: 'station'
+                value: inactivityTracker.output
+            }
+
         }
     }
 
@@ -89,7 +102,7 @@ Page {
                     id: stationText
                     mode: item.mode
                     role: "Title"
-                    text: station
+                    text: destination
                 }
                 ListItemText {
                     id: platformText
@@ -110,10 +123,9 @@ Page {
                     id: delayText
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+"+delay : ""
+                    text: delay > 0 ? "+"+delay/60 + " min" : ""
                 }
             }
         }
     }
-
 }
