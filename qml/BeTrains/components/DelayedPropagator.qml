@@ -3,7 +3,7 @@ import QtQuick 1.0
 Item {
     property string input
     property string output
-    property int delay: 500
+    property alias delay: delayTimer.interval
 
     Timer {
         id: delayTimer

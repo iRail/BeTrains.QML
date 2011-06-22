@@ -4,6 +4,7 @@ import com.nokia.symbian 1.1
 Page {
     id: page
     anchors.fill: parent
+    property alias id: vehicleModel.vehicle
 
 
     //
@@ -13,19 +14,18 @@ Page {
     tools: ToolBarLayout {
         id: toolBar
 
-        // Quit buton
-        // TODO: quit logo
+        // Back buton
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
-            onClicked: Qt.quit()
+            onClicked: pageStack.pop()
         }
 
         // Refresh
         ToolButton {
             id: refreshButton
             iconSource: "toolbar-refresh"
-            onClicked: liveboardModel.reload()
+            onClicked: vehicleModel.reload()
         }
     }
 
@@ -37,10 +37,9 @@ Page {
     ListView {
         anchors.fill: parent
         clip: true
-        id: liveboardView
-        model: liveboardModel
-        delegate: liveboardDelegate
-        header: liveboardHeader
+        id: vehicleView
+        model: vehicleModel
+        delegate: vehicleDelegate
     }
 
 
@@ -49,51 +48,26 @@ Page {
     //
 
     XmlListModel {
-        id: liveboardModel
+        id: vehicleModel
 
-        property string station
-        onStationChanged: {
-            if (station !== "")
-                source = "http://api.irail.be/liveboard.php?station=" + station
+        property string vehicle
+        onVehicleChanged: {
+            if (vehicle !== "")
+                source = "http://api.irail.be/vehicle.php?id=" + vehicle
             else
                 source = ""
         }
 
         source: ""
-        query: "/liveboard/departures/departure"
+        query: "/vehicleinformation/stops/stop"
 
-        XmlRole { name: "destination"; query: "station/string()"; isKey: true}
+        XmlRole { name: "station"; query: "station/string()"; isKey: true}
         XmlRole { name: "time"; query: "time/string()"; isKey: true }
-        XmlRole { name: "vehicle"; query: "vehicle/string()"; isKey: true }
         XmlRole { name: "delay"; query: "@delay/string()" }
-        XmlRole { name: "platform"; query: "platform/string()" }
     }
 
     Component {
-        id: liveboardHeader
-        TextField {
-            anchors { left: parent.left; right: parent.right; }
-            id: stationName
-            placeholderText: "station"
-
-            DelayedPropagator {
-                id: inactivityTracker
-                delay: 500
-            }
-            Binding {
-                target: inactivityTracker; property: 'input'
-                value: text
-            }
-            Binding {
-                target: liveboardModel; property: 'station'
-                value: inactivityTracker.output
-            }
-
-        }
-    }
-
-    Component {
-        id: liveboardDelegate
+        id: vehicleDelegate
 
         ListItem {
             id: item
@@ -102,14 +76,16 @@ Page {
                     id: stationText
                     mode: item.mode
                     role: "Title"
-                    text: destination
+                    text: station
                 }
+                /*
                 ListItemText {
                     id: platformText
                     mode: item.mode
                     role: "SubTitle"
                     text: "Platform " + platform
                 }
+                */
             }
             Column {
                 anchors.right: parent.right
@@ -126,22 +102,6 @@ Page {
                     text: delay > 0 ? "+"+delay/60 + " min" : ""
                 }
             }
-            onClicked: {
-                pageStack.push(vehicleComponent, {id: vehicle});
-            }
-        }
-    }
-
-
-    //
-    // Dynamic components
-    //
-
-    property Page vehicle
-    Component {
-        id: vehicleComponent
-        Vehicle {
-            id: vehicle
         }
     }
 }
