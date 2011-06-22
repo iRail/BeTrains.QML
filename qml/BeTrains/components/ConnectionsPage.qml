@@ -88,11 +88,25 @@ Page {
 
         ListItem {
             id: item
-            ListItemText {
-                id: journeyText
-                mode: item.mode
-                role: "Title"
-                text: origin + " to " + destination
+            Column {
+                ListItemText {
+                    id: originText
+                    mode: item.mode
+                    role: "Title"
+                    text: origin
+                }
+                ListItemText {
+                    id: timeText
+                    mode: item.mode
+                    role: "SubTitle"
+                    text: "Duration: " + duration
+                }
+                ListItemText {
+                    id: destinationText
+                    mode: item.mode
+                    role: "Title"
+                    text: destination
+                }
             }
         }
     }

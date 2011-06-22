@@ -101,6 +101,8 @@ Page {
 
         ListItem {
             id: item
+            subItemIndicator: true
+
             Column {
                 ListItemText {
                     id: stationText
@@ -117,6 +119,7 @@ Page {
             }
             Column {
                 anchors.right: parent.right
+                width: timeText.width + platformStyle.graphicSizeSmall
                 ListItemText {
                     id: timeText
                     mode: item.mode
@@ -130,6 +133,7 @@ Page {
                     text: delay > 0 ? "+"+delay/60 + " min" : ""
                 }
             }
+
             onClicked: {
                 pageStack.push(vehicleComponent, {id: vehicle});
             }
