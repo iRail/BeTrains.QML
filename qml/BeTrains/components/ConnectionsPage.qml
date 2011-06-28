@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.1
+import "../js/utils.js" as Utils
 
 Page {
     id: page
@@ -107,7 +108,7 @@ Page {
                     id: durationText
                     mode: item.mode
                     role: "SubTitle"
-                    text: "Duration: " + readableDuration(duration)
+                    text: "Duration: " + Utils.readableDuration(duration)
                 }
             }
             Column {
@@ -123,30 +124,10 @@ Page {
                     id: delayText
                     mode: item.mode
                     role: "SubTitle"
-                    text: departuredelay > 0 ? "+ " + readableDuration(departuredelay) : ""
+                    text: departuredelay > 0 ? "+" + Utils.readableDuration(departuredelay) : ""
                 }
 
             }
         }
-    }
-
-    function readableDuration(seconds) {
-        var output = ""
-
-        var hours = Math.floor(seconds / 3600)
-        if (hours > 0) {
-            output = hours + "h"
-            seconds = seconds - hours*3600
-        }
-
-        var minutes = Math.floor(seconds / 60)
-        if (minutes > 0) {
-            if (output.length > 0)
-                output = output + " "
-            output = output + minutes + "m"
-            seconds = seconds - minutes*60
-        }
-
-        return output
     }
 }

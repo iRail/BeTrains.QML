@@ -1,5 +1,7 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.1
+import "../js/utils.js" as Utils
+
 
 Page {
     id: page
@@ -130,7 +132,7 @@ Page {
                     id: delayText
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+"+delay/60 + " min" : ""
+                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
                 }
             }
 
