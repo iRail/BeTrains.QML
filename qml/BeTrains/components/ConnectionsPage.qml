@@ -79,8 +79,10 @@ Page {
         source: ""
         query: "/connections/connection"
 
+        XmlRole { name: "id"; query: "@id/string()"; }
         XmlRole { name: "origin"; query: "departure/station/string()"; isKey: true }
         XmlRole { name: "departure"; query: "departure/time/string()"; isKey: true }
+        XmlRole { name: "departuredelay"; query: "departure/@delay/string()"; isKey: true }
         XmlRole { name: "destination"; query: "arrival/station/string()"; isKey: true }
         XmlRole { name: "arrival"; query: "arrival/time/string()"; isKey: true }
         XmlRole { name: "duration"; query: "duration/string()"; }
@@ -96,24 +98,55 @@ Page {
 
             Column {
                 ListItemText {
-                    id: originText
+                    id: viaText
                     mode: item.mode
                     role: "Title"
-                    text: origin
+                    text: vias > 0 ? "Via " + vias + " others" : "Direct"
                 }
+                ListItemText {
+                    id: durationText
+                    mode: item.mode
+                    role: "SubTitle"
+                    text: "Duration: " + readableDuration(duration)
+                }
+            }
+            Column {
+                anchors.right: parent.right
+                width: Math.max(timeText.width, delayText.width) + platformStyle.graphicSizeSmall
                 ListItemText {
                     id: timeText
                     mode: item.mode
-                    role: "SubTitle"
-                    text: "Duration: " + duration
+                    role: "Title"
+                    text: Qt.formatTime(new Date(1000*departure))
                 }
                 ListItemText {
-                    id: destinationText
+                    id: delayText
                     mode: item.mode
-                    role: "Title"
-                    text: destination
+                    role: "SubTitle"
+                    text: departuredelay > 0 ? "+ " + readableDuration(departuredelay) : ""
                 }
+
             }
         }
+    }
+
+    function readableDuration(seconds) {
+        var output = ""
+
+        var hours = Math.floor(seconds / 3600)
+        if (hours > 0) {
+            output = hours + "h"
+            seconds = seconds - hours*3600
+        }
+
+        var minutes = Math.floor(seconds / 60)
+        if (minutes > 0) {
+            if (output.length > 0)
+                output = output + " "
+            output = output + minutes + "m"
+            seconds = seconds - minutes*60
+        }
+
+        return output
     }
 }

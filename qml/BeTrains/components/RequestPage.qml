@@ -32,7 +32,7 @@ Page {
                 pageStack.push(connectionsComponent, {
                                origin: originField.text,
                                destination: destinationField.text,
-                               usedatetime: datetimeCheck.checked,
+                               usedatetime: !typenowButton.checked,
                                datetime: datetime,
                                ready: true
             });
@@ -72,7 +72,6 @@ Page {
                     placeholderText: "Destination..."
                     width: parent.width
                 }
-
             }
 
             Button {
