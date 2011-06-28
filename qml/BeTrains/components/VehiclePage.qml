@@ -28,7 +28,11 @@ Page {
     //
 
     ListView {
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            margins: platformStyle.paddingMedium
+        }
+
         clip: true
         id: vehicleView
         model: vehicleModel

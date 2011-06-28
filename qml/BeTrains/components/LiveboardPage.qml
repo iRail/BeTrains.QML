@@ -119,7 +119,7 @@ Page {
             }
             Column {
                 anchors.right: parent.right
-                width: timeText.width + platformStyle.graphicSizeSmall
+                width: Math.max(timeText.width, delayText.width) + platformStyle.graphicSizeSmall
                 ListItemText {
                     id: timeText
                     mode: item.mode

@@ -41,7 +41,11 @@ Page {
     //
 
     ListView {
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            margins: platformStyle.paddingMedium
+        }
+
         clip: true
         id: connectionsView
         model: connectionsModel
@@ -88,6 +92,8 @@ Page {
 
         ListItem {
             id: item
+            subItemIndicator: true
+
             Column {
                 ListItemText {
                     id: originText

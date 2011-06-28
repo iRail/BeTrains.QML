@@ -50,8 +50,7 @@ Page {
         spacing: platformStyle.paddingMedium
 
         anchors {
-            left: parent.left
-            right: parent.right
+            fill: parent
             margins: platformStyle.paddingMedium
         }
 
