@@ -17,7 +17,7 @@ TextField {
         MouseArea {
             id: stationSearch
             anchors.fill: parent
-            onClicked: destinationSearchDialog.open()
+            onClicked: stationDialog.open()
         }
 
         StationChooser {

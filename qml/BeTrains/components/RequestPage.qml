@@ -90,77 +90,84 @@ Page {
             }
         }
 
-        CheckBox {
-            id: datetimeCheck
-            text: "Specify date and time"
-        }
-
         ButtonRow {
             id: typeGroup
-            width: parent.width - platformStyle.paddingMedium
+            width: parent.width
             exclusive: true
+            checkedButton: typenowButton
 
             ToolButton {
-                text: "Departure"
-                enabled: datetimeCheck.checked
+                text: "Depart"
+            }            
+            ToolButton {
+                id: typenowButton
+                text: "Now"
             }
             ToolButton {
-                text: "Arrival";
-                enabled: datetimeCheck.checked
+                text: "Arrive";
             }
         }
 
-        Button {
-            id: dateField
-            text: "Date: " + datetime.toLocaleDateString()
-            enabled: datetimeCheck.checked
-            width: parent.width - platformStyle.paddingMedium
+        Row {
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
 
-            DatePickerDialog {
-                id: dateDialog
-                titleText: "Select the date"
-                rejectButtonText: "Cancel"
-                acceptButtonText: "Ok"
+            Button {
+                id: dateField
+                text: datetime.toLocaleDateString()
+                enabled: !typenowButton.checked
+                anchors.left:  parent.left
+                width: (parent.width - platformStyle.paddingMedium) / 2
 
-                Component.onCompleted: {
-                    year = datetime.getFullYear()
-                    month = datetime.getMonth()
-                    day = datetime.getDate()
+                DatePickerDialog {
+                    id: dateDialog
+                    titleText: "Select the date"
+                    rejectButtonText: "Cancel"
+                    acceptButtonText: "Ok"
+
+                    Component.onCompleted: {
+                        year = datetime.getFullYear()
+                        month = datetime.getMonth()
+                        day = datetime.getDate()
+                    }
+
+                    onAccepted: datetime = new Date(year, month, day, datetime.getHours(), datetime.getMinutes(), datetime.getSeconds(), datetime.getMilliseconds())
                 }
 
-                onAccepted: datetime = new Date(year, month, day, datetime.getHours(), datetime.getMinutes(), datetime.getSeconds(), datetime.getMilliseconds())
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: dateDialog.open()
+                }
             }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: dateDialog.open()
-            }
-        }
+            Button {
+                id: timeField
+                text: datetime.toLocaleTimeString()
+                enabled: !typenowButton.checked
+                anchors.right:  parent.right
+                width: (parent.width - platformStyle.paddingMedium) / 2
 
-        Button {
-            id: timeField
-            text: "Time: " + datetime.toLocaleTimeString()
-            enabled: datetimeCheck.checked
-            width: parent.width - platformStyle.paddingMedium
+                TimePickerDialog {
+                    id: timeDialog
+                    titleText: "Select the time"
+                    rejectButtonText: "Cancel"
+                    acceptButtonText: "Ok"
 
-            TimePickerDialog {
-                id: timeDialog
-                titleText: "Select the time"
-                rejectButtonText: "Cancel"
-                acceptButtonText: "Ok"
+                    Component.onCompleted: {
+                        hour = datetime.getHours()
+                        minute = datetime.getMinutes()
+                        second = datetime.getSeconds()
+                    }
 
-                Component.onCompleted: {
-                    hour = datetime.getHours()
-                    minute = datetime.getMinutes()
-                    second = datetime.getSeconds()
+                    onAccepted: datetime = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate(), hour, minute, second, 0)
                 }
 
-                onAccepted: datetime = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate(), hour, minute, second, 0)
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: timeDialog.open()
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: timeDialog.open()
+                }
             }
         }
     }
