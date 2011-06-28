@@ -9,8 +9,10 @@ Page {
     property alias destination: connectionsModel.destination
     property alias usedatetime: connectionsModel.usedatetime
     property alias datetime: connectionsModel.datetime
-    property bool ready
 
+    // TODO: This is ugly. Can't we detect in another manner when
+    //       all parameters have been passed?
+    property bool ready
     onReadyChanged: connectionsModel.setSource()
 
 
