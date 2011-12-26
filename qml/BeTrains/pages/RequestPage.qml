@@ -1,6 +1,8 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
 import com.nokia.extras 1.1
+import "../components"
+import "../js/utils.js" as Utils
 
 Page {
     id: page
@@ -16,12 +18,11 @@ Page {
     tools: ToolBarLayout {
         id: pageSpecificTools
 
-        // Quit buton
-        // TODO: quit logo
+        // Back buton
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
-            onClicked: Qt.quit()
+            onClicked: page.pageStack.pop()
         }
 
         // Make request
@@ -29,13 +30,13 @@ Page {
             iconSource: "toolbar-search"
             enabled: originField.text !== "" && destinationField.text !== ""
             onClicked: {
-                pageStack.push(connectionsComponent, {
+                connectionsPage = Utils.getDynamicObject(connectionsPage, connectionsComponent, page)
+                pageStack.push(connectionsPage, {
                                origin: originField.text,
                                destination: destinationField.text,
                                usedatetime: !typenowButton.checked,
-                               datetime: datetime,
-                               ready: true
-            });
+                               datetime: datetime
+                });
             }
         }
     }
@@ -49,6 +50,7 @@ Page {
         id: contents
         spacing: platformStyle.paddingMedium
 
+        width: parent.width
         anchors {
             fill: parent
             margins: platformStyle.paddingMedium
@@ -56,6 +58,7 @@ Page {
 
         Row {
             width: parent.width
+
             Column {
                 id: stationColumn
                 width: parent.width - swapButton.width - platformStyle.paddingMedium
@@ -77,7 +80,6 @@ Page {
             Button {
                 id: swapButton
                 height: stationColumn.height
-                anchors.right: parent.right
                 iconSource: "../icons/swap.png"
 
                 onClicked: {
@@ -108,16 +110,12 @@ Page {
         }
 
         Row {
-            anchors {
-                left: parent.left
-                right: parent.right
-            }
+            width: parent.width
 
             Button {
                 id: dateField
                 text: datetime.toLocaleDateString()
                 enabled: !typenowButton.checked
-                anchors.left:  parent.left
                 width: (parent.width - platformStyle.paddingMedium) / 2
 
                 DatePickerDialog {
@@ -145,7 +143,6 @@ Page {
                 id: timeField
                 text: datetime.toLocaleTimeString()
                 enabled: !typenowButton.checked
-                anchors.right:  parent.right
                 width: (parent.width - platformStyle.paddingMedium) / 2
 
                 TimePickerDialog {
@@ -176,10 +173,10 @@ Page {
     // Dynamic components
     //
 
+    property ConnectionsPage connectionsPage
     Component {
         id: connectionsComponent
-        ConnectionsPage {
-            id: connections
-        }
+
+        ConnectionsPage {}
     }
 }

@@ -42,23 +42,19 @@ Page {
         spacing: 48
         anchors.centerIn: parent
 
-        Row {
-            Button {
-                text: "Liveboards"
-                onClicked: {
-                    window.liveboardPage = Utils.getDynamicObject(window.liveboardPage, liveboardComponent, page)
-                    page.pageStack.push(liveboardPage);
-                }
+        Button {
+            text: "Liveboards"
+            onClicked: {
+                liveboardPage = Utils.getDynamicObject(liveboardPage, liveboardComponent, page)
+                pageStack.push(liveboardPage);
             }
         }
 
-        Row {
-            Button {
-                text: "Connections"
-                onClicked: {
-                    window.connectionsPage = Utils.getDynamicObject(window.connectionsPage, connectionsComponent, page)
-                    page.pageStack.push(window.connectionsPage);
-                }
+        Button {
+            text: "Connections"
+            onClicked: {
+                requestPage = Utils.getDynamicObject(requestPage, requestComponent, page)
+                pageStack.push(requestPage);
             }
         }
     }
@@ -86,11 +82,24 @@ Page {
             }
         }
     }
-
     property Dialog about
     Component {
         id: aboutComponent
 
         AboutDialog {}
+    }
+
+    property Page liveboardPage
+    Component {
+        id: liveboardComponent
+
+        LiveboardPage{}
+    }
+
+    property Page requestPage
+    Component {
+        id: requestComponent
+
+        RequestPage{}
     }
 }

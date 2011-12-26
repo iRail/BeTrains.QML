@@ -6,15 +6,16 @@ import "../js/utils.js" as Utils
 Page {
     id: page
     anchors.fill: parent
+
     property alias origin: connectionsModel.origin
     property alias destination: connectionsModel.destination
     property alias usedatetime: connectionsModel.usedatetime
     property alias datetime: connectionsModel.datetime
-
-    // TODO: This is ugly. Can't we detect in another manner when
-    //       all parameters have been passed?
-    property bool ready
-    onReadyChanged: connectionsModel.setSource()
+    onStatusChanged: {
+        if(status == PageStatus.Activating) {
+            connectionsModel.setSource()
+        }
+    }
 
 
     //
@@ -45,15 +46,23 @@ Page {
     //
 
     ListView {
+        id: connectionsView
+
         anchors {
             fill: parent
             margins: platformStyle.paddingMedium
         }
 
         clip: true
-        id: connectionsView
         model: connectionsModel
         delegate: connectionsDelegate
+    }    
+
+    Text {
+        anchors.centerIn: parent
+        visible: if (connectionsModel.count > 0) false; else true;
+        text: "Loading..."
+        color: platformStyle.colorDisabledLight
     }
 
 
@@ -82,16 +91,16 @@ Page {
         }
 
         source: ""
-        query: "/connections/connection"
+        query: "/connections/Connections"
 
-        XmlRole { name: "id"; query: "@id/string()"; }
-        XmlRole { name: "origin"; query: "departure/station/string()"; isKey: true }
+        XmlRole { name: "origin"; query: "departure/station/name/string()"; isKey: true }
         XmlRole { name: "departure"; query: "departure/time/string()"; isKey: true }
-        XmlRole { name: "departuredelay"; query: "departure/@delay/string()"; isKey: true }
-        XmlRole { name: "destination"; query: "arrival/station/string()"; isKey: true }
+        XmlRole { name: "departuredelay"; query: "departure/delay/number()"; isKey: true }
+
+        XmlRole { name: "destination"; query: "arrival/station/name/string()"; isKey: true }
         XmlRole { name: "arrival"; query: "arrival/time/string()"; isKey: true }
-        XmlRole { name: "duration"; query: "duration/string()"; }
-        XmlRole { name: "vias"; query: "vias/@number/string()"; }
+
+        XmlRole { name: "duration"; query: "duration/number()"; }
     }
 
     Component {
@@ -102,12 +111,12 @@ Page {
             subItemIndicator: true
 
             Column {
-                ListItemText {
-                    id: viaText
-                    mode: item.mode
-                    role: "Title"
-                    text: vias > 0 ? "Via " + vias + " others" : "Direct"
-                }
+//                ListItemText {
+//                    id: viaText
+//                    mode: item.mode
+//                    role: "Title"
+//                    text: vias > 0 ? "Via " + vias + " others" : "Direct"
+//                }
                 ListItemText {
                     id: durationText
                     mode: item.mode

@@ -16,12 +16,12 @@ Page {
     tools: ToolBarLayout {
         id: toolBar
 
-        // Quit buton
+        // Back buton
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
             onClicked:
-                page.pageStack.pop()
+                pageStack.pop()
         }
 
         // Refresh
@@ -101,9 +101,9 @@ Page {
         query: "/liveboard/Liveboard/departures"
 
         XmlRole { name: "destination"; query: "direction/string()"; isKey: true}
-        XmlRole { name: "time"; query: "time/string()"; isKey: true }
+        XmlRole { name: "time"; query: "time/number()"; isKey: true }
         XmlRole { name: "vehicle"; query: "vehicle/string()"; isKey: true }
-        XmlRole { name: "delay"; query: "delay/string()" }
+        XmlRole { name: "delay"; query: "delay/number()" }
         XmlRole { name: "platform"; query: "platform/name/string()" }
     }
 

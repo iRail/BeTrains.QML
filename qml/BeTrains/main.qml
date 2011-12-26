@@ -50,18 +50,4 @@ Window {
     //
 
     property Page homePage: HomePage{}
-
-    property Page liveboardPage
-    Component {
-        id: liveboardComponent
-
-        LiveboardPage{}
-    }
-
-    property Page connectionsPage
-    Component {
-        id: connectionsComponent
-
-        ConnectionsPage{}
-    }
 }
