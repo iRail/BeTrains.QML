@@ -1,10 +1,11 @@
-import QtQuick 1.0
+import "../js/utils.js" as Utils
+import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 TextField {
-    id: station
+    id: field
     placeholderText: "Destination..."
-    platformLeftMargin: stationSearch.width + platformStyle.paddingSmall
+    platformLeftMargin: chooserArea.width + platformStyle.paddingSmall
 
     Image {
         anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
@@ -15,17 +16,28 @@ TextField {
         width: parent.height - platformStyle.paddingMedium * 2
 
         MouseArea {
-            id: stationSearch
+            id: chooserArea
             anchors.fill: parent
-            onClicked: stationDialog.open()
+            onClicked: {
+                chooser = Utils.getDynamicObject(chooser, chooserComponent, field)
+                chooser.open();
+            }
         }
+    }
+
+
+    //
+    // Dynamic components
+    //
+
+    property StationChooser chooser
+    Component {
+        id: chooserComponent
 
         StationChooser {
-            id: stationDialog
-
             onAccepted: {
-                station.text = stationDialog.station
-                station.forceActiveFocus()
+                field.text = stationDialog.station
+                field.forceActiveFocus()
             }
         }
     }

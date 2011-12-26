@@ -1,4 +1,6 @@
-import QtQuick 1.0
+import "../components"
+import "../js/utils.js" as Utils
+import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 Page {
@@ -25,8 +27,7 @@ Page {
         ToolButton {
             iconSource: "toolbar-menu"
             onClicked: {
-                if (!menu)
-                    menu = menuComponent.createObject(root)
+                menu = Utils.getDynamicObject(menu, menuComponent, window)
                 menu.open()
             }
         }
@@ -38,27 +39,30 @@ Page {
     //
 
     Column {
-        id: contents
-        spacing: 14
+        spacing: 48
+        anchors.centerIn: parent
 
-        anchors {
-            left: parent.left
-            right: parent.right
-            margins: contents.spacing
-        }
         Row {
-            id: origin
-
-            Text {
-                id: originLabel
-                anchors.verticalCenter: parent.verticalCenter
-                font { family: platformStyle.fontFamilyRegular; pixelSize: platformStyle.fontSizeMedium }
-                color: platformStyle.colorNormalLight
-                text: "Home screen"
+            Button {
+                text: "Liveboards"
+                onClicked: {
+                    window.liveboardPage = Utils.getDynamicObject(window.liveboardPage, liveboardComponent, page)
+                    page.pageStack.push(liveboardPage);
+                }
             }
+        }
 
+        Row {
+            Button {
+                text: "Connections"
+                onClicked: {
+                    window.connectionsPage = Utils.getDynamicObject(window.connectionsPage, connectionsComponent, page)
+                    page.pageStack.push(window.connectionsPage);
+                }
+            }
         }
     }
+
 
     //
     // Dynamic components
@@ -75,8 +79,7 @@ Page {
                 MenuItem {
                     text: "About"
                     onClicked: {
-                        if (!about)
-                            about = aboutComponent.createObject(menu)
+                        about = Utils.getDynamicObject(about, aboutComponent, menu)
                         about.open()
                     }
                 }
@@ -88,8 +91,6 @@ Page {
     Component {
         id: aboutComponent
 
-        AboutDialog {
-
-        }
+        AboutDialog {}
     }
 }

@@ -1,9 +1,10 @@
-import "components"
-import QtQuick 1.0
+import "pages"
+import "js/utils.js" as Utils
+import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 Window {
-    id: root
+    id: window
 
     //
     // Window structure
@@ -11,74 +12,36 @@ Window {
 
     StatusBar {
         id: statusBar
-        anchors.top: root.top
+        anchors.top: window.top
     }
 
-    TabBar {
-        id: tabBar
-        anchors { left: parent.left; right: parent.right; top: statusBar.bottom }
-        TabButton { tab: homeTab; text: "Home" }
-        TabButton { tab: plannerTab; text: "Planner" }
-        TabButton { tab: liveboardTab; text: "Liveboard" }
+    PageStack {
+        id: pageStack
+        anchors {
+            left: parent.left; right: parent.right
+            top: statusBar.bottom; bottom: toolBar.top
+        }
+        toolBar: toolBar
     }
 
-    TabGroup {
-        id: tabGroup
-        anchors { left: parent.left; right: parent.right; top: tabBar.bottom; bottom: parent.bottom }
+    ToolBar {
+        id: toolBar
+        anchors.bottom: window.bottom
 
-        Page {
-            id: homeTab
+        tools: ToolBarLayout {
+            id: toolBarLayout
 
-            PageStack {
-                id: homeStack
-                toolBar: homeTools
-
-                Component.onCompleted: {
-                    homeStack.push(homeComponent)
-                }
-            }
-
-            ToolBar {
-                id: homeTools
-                anchors { bottom: parent.bottom }
+            ToolButton {
+                flat: true
+                iconSource: "toolbar-back"
+                onClicked:
+                    pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
             }
         }
+    }
 
-        Page {
-            id: plannerTab
-
-            PageStack {
-                id: plannerStack
-                toolBar: plannerTools
-
-                Component.onCompleted: {
-                    plannerStack.push(requestComponent)
-                }
-            }
-
-            ToolBar {
-                id: plannerTools
-                anchors { bottom: parent.bottom }
-            }
-        }
-
-        Page {
-            id: liveboardTab
-
-            PageStack {
-                id: liveboardStack
-                toolBar: liveboardTools
-
-                Component.onCompleted: {
-                    liveboardStack.push(liveboardComponent)
-                }
-            }
-
-            ToolBar {
-                id: liveboardTools
-                anchors { bottom: parent.bottom }
-            }
-        }
+    Component.onCompleted: {
+        pageStack.push(homePage);
     }
 
 
@@ -86,24 +49,19 @@ Window {
     // Dynamic components
     //
 
-    Component {
-        id: homeComponent
-        HomePage {
-            id: home
-        }
-    }
+    property Page homePage: HomePage{}
 
-    Component {
-        id: requestComponent
-        RequestPage {
-            id: request
-        }
-    }
-
+    property Page liveboardPage
     Component {
         id: liveboardComponent
-        LiveboardPage {
-            id: liveboard
-        }
+
+        LiveboardPage{}
+    }
+
+    property Page connectionsPage
+    Component {
+        id: connectionsComponent
+
+        ConnectionsPage{}
     }
 }

@@ -17,3 +17,9 @@ function readableDuration(seconds) {
 
     return output
 }
+
+function getDynamicObject(object, component, parent) {
+    if (object)
+        return object;
+    return component.createObject(parent)
+}

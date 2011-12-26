@@ -3,14 +3,10 @@ folder_01.source = qml/BeTrains
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
-OBJECTS_DIR = obj
-MOC_DIR = obj
-DESTDIR = ./bin
-
 # Additional import path used to resolve QML modules in Creator's code model
-QML_IMPORT_PATH = /usr/lib/qt/imports/
+QML_IMPORT_PATH =
 
-symbian:TARGET.UID3 = 0xE373A275
+symbian:TARGET.UID3 = 0xE5A0AE15
 
 # Smart Installer package's UID
 # This UID is from the protected range and therefore the package will
@@ -27,9 +23,17 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # CONFIG += mobility
 # MOBILITY +=
 
+# Speed up launching on MeeGo/Harmattan when using applauncherd daemon
+# CONFIG += qdeclarative-boostable
+
+# Add dependency to Symbian components
+CONFIG += qt-components
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
+
+

@@ -1,5 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../components"
 import "../js/utils.js" as Utils
 
 
@@ -16,18 +17,21 @@ Page {
         id: toolBar
 
         // Quit buton
-        // TODO: quit logo
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
-            onClicked: Qt.quit()
+            onClicked:
+                page.pageStack.pop()
         }
 
         // Refresh
         ToolButton {
             id: refreshButton
             iconSource: "toolbar-refresh"
-            onClicked: liveboardModel.reload()
+            onClicked:
+                liveboardModel.reload()
+            enabled:
+                stationField.text.length > 0
         }
     }
 
@@ -36,17 +40,46 @@ Page {
     // Contents
     //
 
-    ListView {
+    StationField {
+        id: stationField
+        placeholderText: "Station..."
         anchors {
-            fill: parent
+            top: parent.top
+            left: parent.left
+            right: parent.right
             margins: platformStyle.paddingMedium
         }
 
-        clip: true
+        DelayedPropagator {
+            id: inactivityTracker
+            delay: 750
+
+            input: stationField.text
+            onInputChanged: liveboardModel.station = ""
+            onOutputChanged: liveboardModel.station = output
+        }
+    }
+
+    ListView {
         id: liveboardView
+        anchors {
+            top: stationField.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: platformStyle.paddingMedium
+        }
+        clip: true
         model: liveboardModel
         delegate: liveboardDelegate
-        header: liveboardHeader
+    }
+
+    Text {
+        anchors.centerIn: liveboardView
+        visible: if (liveboardModel.count > 0) false; else true;
+        text:
+            liveboardModel.status === XmlListModel.Loading ? "Loading..." : "Enter a station"
+        color: platformStyle.colorDisabledLight
     }
 
 
@@ -59,43 +92,19 @@ Page {
 
         property string station
         onStationChanged: {
+            source = ""
             if (station !== "")
-                source = "http://api.irail.be/liveboard.php?station=" + station
-            else
-                source = ""
+                source = "http://data.irail.be/NMBS/Liveboard/" + station + ".xml"
         }
 
         source: ""
-        query: "/liveboard/departures/departure"
+        query: "/liveboard/Liveboard/departures"
 
-        XmlRole { name: "destination"; query: "station/string()"; isKey: true}
+        XmlRole { name: "destination"; query: "direction/string()"; isKey: true}
         XmlRole { name: "time"; query: "time/string()"; isKey: true }
         XmlRole { name: "vehicle"; query: "vehicle/string()"; isKey: true }
-        XmlRole { name: "delay"; query: "@delay/string()" }
-        XmlRole { name: "platform"; query: "platform/string()" }
-    }
-
-    Component {
-        id: liveboardHeader
-
-        StationField {
-            id: station
-            placeholderText: "Station..."
-            width: parent.width
-
-            DelayedPropagator {
-                id: inactivityTracker
-                delay: 500
-            }
-            Binding {
-                target: inactivityTracker; property: 'input'
-                value: text
-            }
-            Binding {
-                target: liveboardModel; property: 'station'
-                value: inactivityTracker.output
-            }
-        }
+        XmlRole { name: "delay"; query: "delay/string()" }
+        XmlRole { name: "platform"; query: "platform/name/string()" }
     }
 
     Component {
@@ -137,7 +146,8 @@ Page {
             }
 
             onClicked: {
-                pageStack.push(vehicleComponent, {id: vehicle});
+                vehiclePage = Utils.getDynamicObject(vehiclePage, vehicleComponent, page)
+                pageStack.push(vehiclePage, {id: vehicle});
             }
         }
     }
@@ -147,6 +157,7 @@ Page {
     // Dynamic components
     //
 
+    property VehiclePage vehiclePage
     Component {
         id: vehicleComponent
         VehiclePage {

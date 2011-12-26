@@ -1,5 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../components"
 import "../js/utils.js" as Utils
 
 Page {
@@ -70,12 +71,13 @@ Page {
 
         function setSource() {
             if (origin !== "" && destination !== "") {
-                source = "http://api.irail.be/connections.php?from=" + origin + "&to=" + destination
+                source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination
                 if (usedatetime) {
                     var datestring = Qt.formatDate(datetime, "ddMMyy")
                     var timestring = (datetime.getHours() < 10 ? ("0".datetime.getHours()) : datetime.getHours()) + Qt.formatTime(datetime, "mm")
-                    source = source + "&date=" + datestring + "&time=" + timestring
+                    source = source + "/" + datestring + "/" + timestring
                 }
+                source = source + ".xml"
             }
         }
 
