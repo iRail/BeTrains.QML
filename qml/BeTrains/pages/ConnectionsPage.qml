@@ -56,12 +56,21 @@ Page {
         clip: true
         model: connectionsModel
         delegate: connectionsDelegate
-    }    
+    }
 
     Text {
-        anchors.centerIn: parent
+        anchors.centerIn: connectionsView
         visible: if (connectionsModel.count > 0) false; else true;
-        text: "Loading..."
+        text: {
+            switch (connectionsModel.status) {
+            case XmlListModel.Loading:
+                return "Loading..."
+            case XmlListModel.Error:
+                return "Error!"
+            case XmlListModel.Ready:
+                return "No results"
+            }
+        }
         color: platformStyle.colorDisabledLight
     }
 

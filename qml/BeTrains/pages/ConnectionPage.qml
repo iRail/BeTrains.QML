@@ -37,15 +37,32 @@ Page {
     //
 
     ListView {
+        id: connectionView
+
         anchors {
             fill: parent
             margins: platformStyle.paddingMedium
         }
 
         clip: true
-        id: connectionView
         model: connectionModel
         delegate: connectionDelegate
+    }
+
+    Text {
+        anchors.centerIn: connectionView
+        visible: if (connectionModel.count > 0) false; else true;
+        text: {
+            switch (connectionModel.status) {
+            case XmlListModel.Loading:
+                return "Loading..."
+            case XmlListModel.Error:
+                return "Error!"
+            case XmlListModel.Ready:
+                return "No results"
+            }
+        }
+        color: platformStyle.colorDisabledLight
     }
 
 

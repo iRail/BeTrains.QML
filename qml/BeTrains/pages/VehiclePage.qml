@@ -28,15 +28,32 @@ Page {
     //
 
     ListView {
+        id: vehicleView
+
         anchors {
             fill: parent
             margins: platformStyle.paddingMedium
         }
 
         clip: true
-        id: vehicleView
         model: vehicleModel
         delegate: vehicleDelegate
+    }
+
+    Text {
+        anchors.centerIn: vehicleView
+        visible: if (vehicleModel.count > 0) false; else true;
+        text: {
+            switch (vehicleModel.status) {
+            case XmlListModel.Loading:
+                return "Loading..."
+            case XmlListModel.Error:
+                return "Error!"
+            case XmlListModel.Ready:
+                return "No results"
+            }
+        }
+        color: platformStyle.colorDisabledLight
     }
 
 

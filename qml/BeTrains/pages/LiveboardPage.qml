@@ -77,8 +77,20 @@ Page {
     Text {
         anchors.centerIn: liveboardView
         visible: if (liveboardModel.count > 0) false; else true;
-        text:
-            liveboardModel.status === XmlListModel.Loading ? "Loading..." : "Enter a station"
+        text: {
+            switch (liveboardModel.status) {
+            case XmlListModel.Loading:
+                return "Loading..."
+            case XmlListModel.Error:
+                return "Error!"
+            case XmlListModel.Ready:
+                if (liveboardModel.source.toString())
+                    return "No results"
+                // Deliberate fall-through
+            case XmlListModel.Null:
+                return "Enter a station"
+            }
+        }
         color: platformStyle.colorDisabledLight
     }
 
