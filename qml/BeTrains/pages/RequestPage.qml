@@ -58,10 +58,12 @@ Page {
 
         Row {
             width: parent.width
+            spacing: platformStyle.paddingMedium
 
             Column {
                 id: stationColumn
                 width: parent.width - swapButton.width - platformStyle.paddingMedium
+                spacing: platformStyle.paddingSmall
 
                 StationField {
                     id: originField
@@ -111,6 +113,7 @@ Page {
 
         Row {
             width: parent.width
+            spacing: platformStyle.paddingMedium
 
             Button {
                 id: dateField
