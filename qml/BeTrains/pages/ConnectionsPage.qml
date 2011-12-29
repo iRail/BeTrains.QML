@@ -124,17 +124,17 @@ Page {
             subItemIndicator: true
 
             Column {
-//                ListItemText {
-//                    id: viaText
-//                    mode: item.mode
-//                    role: "Title"
-//                    text: vias > 0 ? "Via " + vias + " others" : "Direct"
-//                }
+                ListItemText {
+                    id: connectionText
+                    mode: item.mode
+                    role: "Title"
+                    text: origin + " to " + destination
+                }
                 ListItemText {
                     id: durationText
                     mode: item.mode
                     role: "SubTitle"
-                    text: "Duration: " + Utils.readableDuration(duration)
+                    text: Utils.readableDuration(duration) + ", via 42 others"
                 }
             }
             Column {
