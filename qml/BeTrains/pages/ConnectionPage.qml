@@ -8,6 +8,12 @@ Page {
     property alias source: connectionModel.source
     property alias id: connectionModel.id
 
+    onStatusChanged: {
+        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+            connectionModel.source = ""
+        }
+    }
+
 
     //
     // Toolbar

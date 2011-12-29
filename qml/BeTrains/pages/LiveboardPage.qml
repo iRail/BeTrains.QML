@@ -8,6 +8,13 @@ Page {
     id: page
     anchors.fill: parent
 
+    onStatusChanged: {
+        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+            stationField.text = ""
+            liveboardModel.source = ""
+        }
+    }
+
 
     //
     // Toolbar
@@ -106,7 +113,6 @@ Page {
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + ".xml"
         }
 
-        source: ""
         query: "/liveboard/Liveboard/departures"
 
         XmlRole { name: "destination"; query: "direction/string()"; isKey: true}

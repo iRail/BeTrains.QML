@@ -11,9 +11,13 @@ Page {
     property alias destination: connectionsModel.destination
     property alias usedatetime: connectionsModel.usedatetime
     property alias datetime: connectionsModel.datetime
+
     onStatusChanged: {
-        if(status == PageStatus.Activating) {
+        if (status == PageStatus.Activating) {
             connectionsModel.setSource()
+        }
+        else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+            connectionsModel.source = ""
         }
     }
 

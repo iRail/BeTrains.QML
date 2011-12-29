@@ -6,6 +6,12 @@ Page {
     anchors.fill: parent
     property alias id: vehicleModel.vehicle
 
+    onStatusChanged: {
+        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+            vehicleModel.source = ""
+        }
+    }
+
 
     //
     // Toolbar
@@ -66,10 +72,9 @@ Page {
 
         property string vehicle
         onVehicleChanged: {
+            source = ""
             if (vehicle !== "")
                 source = "http://api.irail.be/vehicle.php?id=" + vehicle
-            else
-                source = ""
         }
 
         source: ""
