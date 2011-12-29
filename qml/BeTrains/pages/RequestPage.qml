@@ -101,7 +101,7 @@ Page {
 
             ToolButton {
                 text: "Depart"
-            }            
+            }
             ToolButton {
                 id: typenowButton
                 text: "Now"

@@ -20,18 +20,15 @@ Page {
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
-            onClicked:
-                pageStack.pop()
+            onClicked: pageStack.pop()
         }
 
         // Refresh
         ToolButton {
             id: refreshButton
             iconSource: "toolbar-refresh"
-            onClicked:
-                liveboardModel.reload()
-            enabled:
-                stationField.text.length > 0
+            onClicked: liveboardModel.reload()
+            enabled: stationField.text.length > 0
         }
     }
 
