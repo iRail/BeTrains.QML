@@ -138,7 +138,7 @@ Page {
 
         ListItem {
             id: item
-            subItemIndicator: true
+            subItemIndicator: if (vias > 0) true; else false;
 
             Column {
                 ListItemText {
@@ -172,6 +172,8 @@ Page {
             }
 
             onClicked: {
+                if (vias === 0)
+                    return;
                 connectionPage = Utils.getDynamicObject(connectionPage, connectionComponent, page)
                 pageStack.push(connectionPage, {xml: connectionsModel.xml, id: connectionsView.currentIndex});
             }
