@@ -174,8 +174,8 @@ Page {
             onClicked: {
                 if (vias === 0)
                     return;
-                connectionPage = Utils.getDynamicObject(connectionPage, connectionComponent, page)
-                pageStack.push(connectionPage, {xml: connectionsModel.xml, id: connectionsView.currentIndex});
+                viaPage = Utils.getDynamicObject(viaPage, viaComponent, page)
+                pageStack.push(viaPage, {xml: connectionsModel.xml, id: connectionsView.currentIndex});
             }
         }
     }
@@ -185,9 +185,9 @@ Page {
     // Dynamic components
     //
 
-    property ConnectionPage connectionPage
+    property ViaPage viaPage
     Component {
-        id: connectionComponent
-        ConnectionPage {}
+        id: viaComponent
+        ViaPage {}
     }
 }

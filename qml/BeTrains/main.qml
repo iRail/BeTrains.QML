@@ -15,34 +15,50 @@ Window {
         anchors.top: window.top
     }
 
-    PageStack {
-        id: pageStack
+    TabBarLayout {
+        id: tabBarLayout
+        anchors {
+            top: statusBar.bottom
+            left: parent.left;
+            right: parent.right;
+        }
+        TabButton { tab: pageStackLiveboard; text: "Liveboard" }
+        TabButton { tab: pageStackTravel; text: "Travel" }
+    }
+
+    TabGroup {
+        id: tabGroup
+        currentTab: pageStack
+
         anchors {
             left: parent.left;
             right: parent.right
-            top: statusBar.bottom;
+            top: tabBarLayout.bottom;
             bottom: toolBar.top
         }
-        toolBar: toolBar
+
+        PageStack {
+            id: pageStackLiveboard
+            anchors.fill: parent
+            toolBar: toolBar
+        }
+
+        PageStack {
+            id: pageStackTravel
+            anchors.fill: parent
+            toolBar: toolBar
+        }
     }
 
+    // This reserves space
     ToolBar {
         id: toolBar
         anchors.bottom: window.bottom
-
-        tools: ToolBarLayout {
-            id: toolBarLayout
-
-            ToolButton {
-                flat: true
-                iconSource: "toolbar-back"
-                onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
-            }
-        }
     }
 
     Component.onCompleted: {
-        pageStack.push(homePage);
+        pageStackLiveboard.push(liveboardPage);
+        pageStackTravel.push(travelPage)
     }
 
 
@@ -50,5 +66,6 @@ Window {
     // Dynamic components
     //
 
-    property Page homePage: HomePage{}
+    property LiveboardPage liveboardPage : LiveboardPage {}
+    property TravelPage travelPage : TravelPage {}
 }
