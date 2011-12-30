@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../js/utils.js" as Utils
 
 Page {
     id: page
@@ -73,16 +74,17 @@ Page {
         property string vehicle
         onVehicleChanged: {
             source = ""
+            vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
             if (vehicle !== "")
-                source = "http://api.irail.be/vehicle.php?id=" + vehicle
+                source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + ".xml"
         }
 
         source: ""
-        query: "/vehicleinformation/stops/stop"
+        query: "/vehicle/Vehicle/stops"
 
-        XmlRole { name: "station"; query: "station/string()"; isKey: true}
-        XmlRole { name: "time"; query: "time/string()"; isKey: true }
-        XmlRole { name: "delay"; query: "@delay/string()" }
+        XmlRole { name: "station"; query: "station/name/string()"; isKey: true}
+        XmlRole { name: "time"; query: "time/number()"; isKey: true }
+        XmlRole { name: "delay"; query: "delay/number()" }
     }
 
     Component {
@@ -110,7 +112,7 @@ Page {
                     id: delayText
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+"+delay/60 + " min" : ""
+                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
                 }
             }
         }
