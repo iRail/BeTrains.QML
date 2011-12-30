@@ -7,7 +7,7 @@ SelectionDialog {
     selectedIndex: -1
     model: stationModel
 
-    property string station: selectedIndex != -1 ? stationModel.get(selectedIndex).name : ""
+    property string station: selectedIndex !== -1 ? stationModel.get(selectedIndex).name : ""
     onRejected: selectedIndex = -1
 
 

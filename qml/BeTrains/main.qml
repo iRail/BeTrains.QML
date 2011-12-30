@@ -18,8 +18,10 @@ Window {
     PageStack {
         id: pageStack
         anchors {
-            left: parent.left; right: parent.right
-            top: statusBar.bottom; bottom: toolBar.top
+            left: parent.left;
+            right: parent.right
+            top: statusBar.bottom;
+            bottom: toolBar.top
         }
         toolBar: toolBar
     }
