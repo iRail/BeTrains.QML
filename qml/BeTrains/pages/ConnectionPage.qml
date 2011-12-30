@@ -86,10 +86,10 @@ Page {
         XmlRole { name: "station"; query: "station/name/string()"; isKey: true }
 
         XmlRole { name: "arrival"; query: "arrival/time/number()"; isKey: true }
-        XmlRole { name: "arrival_platform"; query: "arrival/platform/name/string()"; isKey: true }
+        XmlRole { name: "arrival_platform"; query: "arrival/platform/name/string()"; }
 
         XmlRole { name: "departure"; query: "departure/time/number()"; isKey: true }
-        XmlRole { name: "departure_platform"; query: "departure/platform/name/string()"; isKey: true }
+        XmlRole { name: "departure_platform"; query: "departure/platform/name/string()"; }
 
         XmlRole { name: "direction"; query: "direction/string()"; isKey: true }
     }

@@ -123,7 +123,7 @@ Page {
 
         XmlRole { name: "origin"; query: "departure/station/name/string()"; isKey: true }
         XmlRole { name: "departure"; query: "departure/time/string()"; isKey: true }
-        XmlRole { name: "departuredelay"; query: "departure/delay/number()"; isKey: true }
+        XmlRole { name: "delay"; query: "departure/delay/number()"; }
 
         XmlRole { name: "destination"; query: "arrival/station/name/string()"; isKey: true }
         XmlRole { name: "arrival"; query: "arrival/time/string()"; isKey: true }
@@ -165,7 +165,7 @@ Page {
                     id: delayText
                     mode: item.mode
                     role: "SubTitle"
-                    text: departuredelay > 0 ? "+" + Utils.readableDuration(departuredelay) : ""
+                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
                 }
             }
 
