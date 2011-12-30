@@ -63,6 +63,7 @@ Page {
     }
 
     Text {
+        id: connectionsStatus
         anchors.centerIn: connectionsView
         visible: if (connectionsModel.count > 0) false; else true;
         text: {
@@ -93,17 +94,31 @@ Page {
 
         function setSource() {
             if (origin !== "" && destination !== "") {
-                source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination
+                var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination
                 if (usedatetime) {
                     var datestring = Qt.formatDate(datetime, "ddMMyy")
                     var timestring = (datetime.getHours() < 10 ? ("0".datetime.getHours()) : datetime.getHours()) + Qt.formatTime(datetime, "mm")
                     source = source + "/" + datestring + "/" + timestring
                 }
                 source = source + ".xml"
+
+                // FIXME: this is a work-around, using a separate XMLHttpRequest object so we actually
+                // have access to the downloaded source afterwards (in order to pass it to the ConnectionPage).
+                // FIX 1: get access to the model its xml property after having used the source property
+                // FIX 2: use a XPath function to acquire the source of a connection
+                // FIX 3: use a hierarchical ListView (TreeView)
+                var doc = new XMLHttpRequest();
+                doc.onreadystatechange = function() {
+                    if (doc.readyState === XMLHttpRequest.DONE) {
+                        connectionsModel.xml = doc.responseText
+                    }
+                }
+                connectionsStatus.text = "Loading..."
+                doc.open("GET", source);
+                doc.send();
             }
         }
 
-        source: ""
         query: "/connections/Connections"
 
         XmlRole { name: "origin"; query: "departure/station/name/string()"; isKey: true }
@@ -152,8 +167,23 @@ Page {
                     role: "SubTitle"
                     text: departuredelay > 0 ? "+" + Utils.readableDuration(departuredelay) : ""
                 }
+            }
 
+            onClicked: {
+                connectionPage = Utils.getDynamicObject(connectionPage, connectionComponent, page)
+                pageStack.push(connectionPage, {xml: connectionsModel.xml, id: connectionsView.currentIndex});
             }
         }
+    }
+
+
+    //
+    // Dynamic components
+    //
+
+    property ConnectionPage connectionPage
+    Component {
+        id: connectionComponent
+        ConnectionPage {}
     }
 }

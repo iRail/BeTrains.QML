@@ -5,7 +5,8 @@ import "../js/utils.js" as Utils
 Page {
     id: page
     anchors.fill: parent
-    property alias source: connectionModel.source
+
+    property alias xml: connectionModel.xml
     property alias id: connectionModel.id
 
     onStatusChanged: {
@@ -79,8 +80,18 @@ Page {
     XmlListModel {
         id: connectionModel
 
-        property string id
-        query: "/connection/connection[id=" + id + "]"
+        property int id
+        query: "/connections/Connections[" + (id + 1) + "]/via"
+
+        XmlRole { name: "station"; query: "station/name/string()"; isKey: true }
+
+        XmlRole { name: "arrival"; query: "arrival/time/number()"; isKey: true }
+        XmlRole { name: "arrival_platform"; query: "arrival/platform/name/string()"; isKey: true }
+
+        XmlRole { name: "departure"; query: "departure/time/number()"; isKey: true }
+        XmlRole { name: "departure_platform"; query: "departure/platform/name/string()"; isKey: true }
+
+        XmlRole { name: "direction"; query: "direction/string()"; isKey: true }
     }
 
     Component {
@@ -88,6 +99,37 @@ Page {
 
         ListItem {
             id: item
+
+            Column {
+                ListItemText {
+                    id: stationText
+                    mode: item.mode
+                    role: "Title"
+                    text: "Transfer at " + station
+                }
+                ListItemText {
+                    id: directionText
+                    mode: item.mode
+                    role: "SubTitle"
+                    text: "Towards " + direction
+                }
+            }
+            Column {
+                anchors.right: parent.right
+                width: Math.max(arrText.width, depText.width)
+                ListItemText {
+                    id: arrText
+                    mode: item.mode
+                    role: "Title"
+                    text: "Platform " + arrival_platform + ", " + Qt.formatTime(new Date(1000*arrival))
+                }
+                ListItemText {
+                    id: depText
+                    mode: item.mode
+                    role: "Title"
+                    text: "Platform " + departure_platform + ", " + Qt.formatTime(new Date(1000*departure))
+                }
+            }
         }
     }
 }

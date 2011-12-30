@@ -175,8 +175,6 @@ Page {
     property VehiclePage vehiclePage
     Component {
         id: vehicleComponent
-        VehiclePage {
-            id: vehicle
-        }
+        VehiclePage {}
     }
 }
