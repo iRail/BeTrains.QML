@@ -13,11 +13,12 @@ Page {
     property alias datetime: connectionsModel.datetime
 
     onStatusChanged: {
-        if (status == PageStatus.Activating) {
+        if (status === PageStatus.Activating) {
             connectionsModel.setSource()
         }
         else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            connectionsModel.source = ""
+            // FIXME: revert this to .source when removing the data fetching workaround
+            connectionsModel.xml = ""
         }
     }
 
@@ -124,6 +125,7 @@ Page {
         XmlRole { name: "origin"; query: "departure/station/name/string()"; isKey: true }
         XmlRole { name: "departure"; query: "departure/time/string()"; isKey: true }
         XmlRole { name: "delay"; query: "departure/delay/number()"; }
+        XmlRole { name: "vias"; query: "count(via)"; }
 
         XmlRole { name: "destination"; query: "arrival/station/name/string()"; isKey: true }
         XmlRole { name: "arrival"; query: "arrival/time/string()"; isKey: true }
@@ -149,7 +151,7 @@ Page {
                     id: durationText
                     mode: item.mode
                     role: "SubTitle"
-                    text: Utils.readableDuration(duration) + ", via 42 others"
+                    text: Utils.readableDuration(duration) + " en route, " + (vias > 0 ? ("via " + vias + " others") : "direct")
                 }
             }
             Column {

@@ -11,7 +11,8 @@ Page {
 
     onStatusChanged: {
         if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            connectionModel.source = ""
+            // FIXME: revert this to .source when removing the data fetching workaround
+            connectionModel.xml = ""
         }
     }
 
