@@ -19,13 +19,20 @@ Page {
     //
 
     tools: ToolBarLayout {
-        id: toolBar
-
         // Back buton
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
             onClicked: pageStack.pop()
+        }
+
+        // Menu
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: {
+                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                window.menu.open()
+            }
         }
     }
 

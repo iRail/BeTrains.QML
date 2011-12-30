@@ -28,8 +28,6 @@ Page {
     //
 
     tools: ToolBarLayout {
-        id: toolBar
-
         // Back buton
         ToolButton {
             flat: true
@@ -42,6 +40,15 @@ Page {
             id: refreshButton
             iconSource: "toolbar-refresh"
             onClicked: connectionsModel.reload()
+        }
+
+        // Menu
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: {
+                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                window.menu.open()
+            }
         }
     }
 

@@ -22,8 +22,6 @@ Page {
     //
 
     tools: ToolBarLayout {
-        id: toolBar
-
         // Back buton
         ToolButton {
             flat: true
@@ -31,11 +29,13 @@ Page {
             onClicked: pageStack.pop()
         }
 
-        // Refresh
+        // Menu
         ToolButton {
-            id: refreshButton
-            iconSource: "toolbar-refresh"
-            onClicked: connectionModel.reload()
+            iconSource: "toolbar-menu"
+            onClicked: {
+                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                window.menu.open()
+            }
         }
     }
 

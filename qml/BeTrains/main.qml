@@ -1,7 +1,8 @@
-import "pages"
-import "js/utils.js" as Utils
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "pages"
+import "components"
+import "js/utils.js" as Utils
 
 Window {
     id: window
@@ -18,47 +19,60 @@ Window {
     TabBarLayout {
         id: tabBarLayout
         anchors {
-            top: statusBar.bottom
             left: parent.left;
             right: parent.right;
+            top: statusBar.bottom
         }
-        TabButton { tab: pageStackLiveboard; text: "Liveboard" }
-        TabButton { tab: pageStackTravel; text: "Travel" }
+        TabButton { tab: tabLiveboard; text: "Liveboard" }
+        TabButton { tab: tabTravel; text: "Travel" }
     }
 
     TabGroup {
         id: tabGroup
-        currentTab: pageStack
+        currentTab: tabLiveboard
 
         anchors {
             left: parent.left;
             right: parent.right
             top: tabBarLayout.bottom;
-            bottom: toolBar.top
+            bottom: parent.bottom
         }
 
-        PageStack {
-            id: pageStackLiveboard
-            anchors.fill: parent
-            toolBar: toolBar
+        Page {
+            id: tabLiveboard
+
+            PageStack {
+                id: pageStackLiveboard
+                toolBar: toolBarLiveboard
+
+                Component.onCompleted: {
+                    push(liveboardPage);
+                }
+            }
+
+            ToolBar {
+                id: toolBarLiveboard
+                anchors.bottom: parent.bottom
+            }
         }
 
-        PageStack {
-            id: pageStackTravel
-            anchors.fill: parent
-            toolBar: toolBar
+        Page {
+            id: tabTravel
+
+            PageStack {
+                id: pageStackTravel
+                toolBar: toolBarTravel
+
+                Component.onCompleted: {
+                    push(travelPage)
+                }
+            }
+
+            ToolBar {
+                id: toolBarTravel
+                anchors.bottom: parent.bottom
+            }
         }
-    }
-
-    // This reserves space
-    ToolBar {
-        id: toolBar
-        anchors.bottom: window.bottom
-    }
-
-    Component.onCompleted: {
-        pageStackLiveboard.push(liveboardPage);
-        pageStackTravel.push(travelPage)
     }
 
 
@@ -68,4 +82,29 @@ Window {
 
     property LiveboardPage liveboardPage : LiveboardPage {}
     property TravelPage travelPage : TravelPage {}
+
+    property Menu menu
+    Component {
+        id: menuComponent
+
+        Menu {
+            id: menu
+            content: MenuLayout {
+                // About
+                MenuItem {
+                    text: "About"
+                    onClicked: {
+                        about = Utils.getDynamicObject(about, aboutComponent, menu)
+                        about.open()
+                    }
+                }
+            }
+        }
+    }
+    property Dialog about
+    Component {
+        id: aboutComponent
+
+        AboutDialog {}
+    }
 }

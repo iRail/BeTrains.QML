@@ -16,13 +16,11 @@ Page {
     //
 
     tools: ToolBarLayout {
-        id: pageSpecificTools
-
         // Back buton
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
-            onClicked: page.pageStack.pop()
+            onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
         }
 
         // Make request
@@ -37,6 +35,15 @@ Page {
                                usedatetime: !typenowButton.checked,
                                datetime: datetime
                 });
+            }
+        }
+
+        // Menu
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: {
+                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                window.menu.open()
             }
         }
     }

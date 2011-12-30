@@ -21,13 +21,11 @@ Page {
     //
 
     tools: ToolBarLayout {
-        id: toolBar
-
         // Back buton
         ToolButton {
             flat: true
             iconSource: "toolbar-back"
-            onClicked: pageStack.pop()
+            onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
         }
 
         // Refresh
@@ -36,6 +34,15 @@ Page {
             iconSource: "toolbar-refresh"
             onClicked: liveboardModel.reload()
             enabled: stationField.text.length > 0
+        }
+
+        // Menu
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: {
+                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                window.menu.open()
+            }
         }
     }
 
