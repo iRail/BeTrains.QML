@@ -10,6 +10,7 @@ Page {
     property alias origin: connectionsModel.origin
     property alias destination: connectionsModel.destination
     property alias datetime: connectionsModel.datetime
+    property alias arrival: connectionsModel.arrival
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
@@ -98,11 +99,14 @@ Page {
         property string origin
         property string destination
         property date datetime
+        property bool arrival
 
         function setSource() {
             if (origin !== "" && destination !== "") {
-                var datetimestring = Qt.formatDateTime(datetime, "UTC:yyyy/MM/dd/hh/mm")
+                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
                 var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + datetimestring + ".xml"
+                if (arrival)
+                    source = source + "?timeSel=arrival"
 
                 // FIXME: this is a work-around, using a separate XMLHttpRequest object so we actually
                 // have access to the downloaded source afterwards (in order to pass it to the ConnectionPage).

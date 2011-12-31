@@ -32,7 +32,8 @@ Page {
                 pageStack.push(connectionsPage, {
                                origin: originField.text,
                                destination: destinationField.text,
-                               datetime: typenowButton.checked ? new Date() : datetime
+                               datetime: buttonTypeNow.checked ? new Date() : datetime,
+                               arrival: buttonTypeArrive.checked
                 });
             }
         }
@@ -100,19 +101,21 @@ Page {
         }
 
         ButtonRow {
-            id: typeGroup
+            id: groupType
             width: parent.width
             exclusive: true
-            checkedButton: typenowButton
+            checkedButton: buttonTypeNow
 
             ToolButton {
+                id: buttonTypeDepart
                 text: "Depart"
             }
             ToolButton {
-                id: typenowButton
+                id: buttonTypeNow
                 text: "Now"
             }
             ToolButton {
+                id: buttonTypeArrive
                 text: "Arrive";
             }
         }
@@ -124,7 +127,7 @@ Page {
             Button {
                 id: dateField
                 text: datetime.toLocaleDateString()
-                enabled: !typenowButton.checked
+                enabled: !buttonTypeNow.checked
                 width: (parent.width - platformStyle.paddingMedium) / 2
 
                 DatePickerDialog {
@@ -151,7 +154,7 @@ Page {
             Button {
                 id: timeField
                 text: Utils.readableTime(datetime)
-                enabled: !typenowButton.checked
+                enabled: !buttonTypeNow.checked
                 width: (parent.width - platformStyle.paddingMedium) / 2
 
                 TimePickerDialog {
