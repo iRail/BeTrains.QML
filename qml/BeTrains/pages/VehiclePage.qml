@@ -80,11 +80,13 @@ Page {
         id: vehicleModel
 
         property string vehicle
+        property date datetime: new Date()
+
         onVehicleChanged: {
             source = ""
             vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
             if (vehicle !== "")
-                source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + ".xml"
+                source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
         }
 
         source: ""

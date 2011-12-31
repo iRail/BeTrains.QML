@@ -120,8 +120,7 @@ Page {
         onStationChanged: {
             source = ""
             if (station !== "") {
-                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
-                source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + datetimestring + ".xml"
+                source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
             }
         }
 

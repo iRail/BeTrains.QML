@@ -28,6 +28,10 @@ function readableTime(datetime) {
     return Qt.formatTime(datetime, "hh:mm")
 }
 
+function generateDateUrl(datetime) {
+    return Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
+}
+
 function getDynamicObject(object, component, parent) {
     if (object)
         return object;

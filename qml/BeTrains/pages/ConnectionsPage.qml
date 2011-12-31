@@ -116,8 +116,7 @@ Page {
 
         function setSource() {
             if (origin !== "" && destination !== "") {
-                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
-                var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + datetimestring + ".xml"
+                var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + Utils.generateDateUrl(datetime) + ".xml"
                 if (arrival)
                     source = source + "?timeSel=arrival"
 
