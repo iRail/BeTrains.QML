@@ -84,6 +84,7 @@ Page {
             }
         }
         color: platformStyle.colorDisabledLight
+        font.pixelSize: platformStyle.fontSizeLarge
     }
 
 
