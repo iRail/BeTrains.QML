@@ -17,12 +17,17 @@ Page {
             connectionsModel.setSource()
         }
         else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            // FIXME: revert this to .source when removing the data fetching workaround
-            // FIXME: we need to fill .xml with dummy data, or all the keys might be the same, in which case
+            // WORKAROUND: revert this to .source when removing the data fetching workaround
+            // WORKAROUND: we need to fill .xml with dummy data, or all the keys might be the same, in which case
             // the listview doesn't update (since nothing is changed, and it apparently doesn't get emptied)
             connectionsModel.xml = '<?xml version="1.0" encoding="UTF-8" ?> <connections />'
         }
     }
+
+    // WORKAROUND: properties indicating the status of the XML fetch, as we can't (due to our
+    // workaround) check the XmlListModel for them
+    property bool connectionsModelLoading: false
+    property bool connectionsModelError: false
 
 
     //
@@ -77,6 +82,12 @@ Page {
         anchors.centerIn: connectionsView
         visible: if (connectionsModel.count > 0) false; else true;
         text: {
+            // WORKAROUND
+            if (connectionsModelLoading)
+                return "Loading..."
+            else if (connectionsModelError)
+                return "Error!"
+
             switch (connectionsModel.status) {
             case XmlListModel.Loading:
                 return "Loading..."
@@ -110,18 +121,24 @@ Page {
                 if (arrival)
                     source = source + "?timeSel=arrival"
 
-                // FIXME: this is a work-around, using a separate XMLHttpRequest object so we actually
+                // WORKAROUND: this is a work-around, using a separate XMLHttpRequest object so we actually
                 // have access to the downloaded source afterwards (in order to pass it to the ConnectionPage).
                 // FIX 1: get access to the model its xml property after having used the source property
                 // FIX 2: use a XPath function to acquire the source of a connection
                 // FIX 3: use a hierarchical ListView (TreeView)
                 var doc = new XMLHttpRequest();
                 doc.onreadystatechange = function() {
-                    if (doc.readyState === XMLHttpRequest.DONE) {
-                        connectionsModel.xml = doc.responseText
-                    }
-                }
-                connectionsStatus.text = "Loading..."
+                            if (doc.readyState === XMLHttpRequest.DONE) {
+                                if (doc.status != 200) {
+                                    connectionsModelError = true
+                                    connectionsModelLoading = false
+                                } else {
+                                    connectionsModel.xml = doc.responseText
+                                    connectionsModelLoading = false
+                                }
+                            }
+                        }
+                connectionsModelLoading = true
                 doc.open("GET", source);
                 doc.send();
             }
