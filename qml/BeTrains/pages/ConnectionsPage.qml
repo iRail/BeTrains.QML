@@ -18,7 +18,9 @@ Page {
         }
         else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
             // FIXME: revert this to .source when removing the data fetching workaround
-            connectionsModel.xml = ""
+            // FIXME: we need to fill .xml with dummy data, or all the keys might be the same, in which case
+            // the listview doesn't update (since nothing is changed, and it apparently doesn't get emptied)
+            connectionsModel.xml = '<?xml version="1.0" encoding="UTF-8" ?> <connections />'
         }
     }
 
