@@ -18,6 +18,14 @@ function readableDuration(seconds) {
     return output
 }
 
+function getDateTime(seconds) {
+    return new Date(1000*seconds)
+}
+
+function readableTime(datetime) {
+    return Qt.formatTime(datetime, Qt.DefaultLocaleShortDate)
+}
+
 function getDynamicObject(object, component, parent) {
     if (object)
         return object;

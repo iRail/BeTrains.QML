@@ -113,7 +113,7 @@ Page {
                     id: timeText
                     mode: item.mode
                     role: "Title"
-                    text: Qt.formatTime(new Date(1000*time))
+                    text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText

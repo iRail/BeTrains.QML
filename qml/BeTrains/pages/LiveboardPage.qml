@@ -114,10 +114,14 @@ Page {
         id: liveboardModel
 
         property string station
+        property date datetime: new Date()
+
         onStationChanged: {
             source = ""
-            if (station !== "")
-                source = "http://data.irail.be/NMBS/Liveboard/" + station + ".xml"
+            if (station !== "") {
+                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
+                source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + datetimestring + ".xml"
+            }
         }
 
         query: "/liveboard/Liveboard/departures"
@@ -157,7 +161,7 @@ Page {
                     id: timeText
                     mode: item.mode
                     role: "Title"
-                    text: Qt.formatTime(new Date(1000*time))
+                    text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText

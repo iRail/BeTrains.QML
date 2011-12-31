@@ -32,8 +32,7 @@ Page {
                 pageStack.push(connectionsPage, {
                                origin: originField.text,
                                destination: destinationField.text,
-                               usedatetime: !typenowButton.checked,
-                               datetime: datetime
+                               datetime: typenowButton.checked ? new Date() : datetime
                 });
             }
         }
@@ -151,7 +150,7 @@ Page {
 
             Button {
                 id: timeField
-                text: datetime.toLocaleTimeString()
+                text: Utils.readableTime(datetime)
                 enabled: !typenowButton.checked
                 width: (parent.width - platformStyle.paddingMedium) / 2
 

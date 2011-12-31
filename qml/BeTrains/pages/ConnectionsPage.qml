@@ -9,7 +9,6 @@ Page {
 
     property alias origin: connectionsModel.origin
     property alias destination: connectionsModel.destination
-    property alias usedatetime: connectionsModel.usedatetime
     property alias datetime: connectionsModel.datetime
 
     onStatusChanged: {
@@ -97,18 +96,12 @@ Page {
 
         property string origin
         property string destination
-        property bool usedatetime: false
         property date datetime
 
         function setSource() {
             if (origin !== "" && destination !== "") {
-                var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination
-                if (usedatetime) {
-                    var datestring = Qt.formatDate(datetime, "ddMMyy")
-                    var timestring = (datetime.getHours() < 10 ? ("0".datetime.getHours()) : datetime.getHours()) + Qt.formatTime(datetime, "mm")
-                    source = source + "/" + datestring + "/" + timestring
-                }
-                source = source + ".xml"
+                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
+                var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + datetimestring + ".xml"
 
                 // FIXME: this is a work-around, using a separate XMLHttpRequest object so we actually
                 // have access to the downloaded source afterwards (in order to pass it to the ConnectionPage).
@@ -168,7 +161,7 @@ Page {
                     id: timeText
                     mode: item.mode
                     role: "Title"
-                    text: Qt.formatTime(new Date(1000*departure))
+                    text: Utils.readableTime(Utils.getDateTime(departure))
                 }
                 ListItemText {
                     id: delayText

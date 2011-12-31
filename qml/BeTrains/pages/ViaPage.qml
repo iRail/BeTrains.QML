@@ -122,13 +122,13 @@ Page {
                     id: arrText
                     mode: item.mode
                     role: "Title"
-                    text: "Platform " + arrival_platform + ", " + Qt.formatTime(new Date(1000*arrival))
+                    text: "Platform " + arrival_platform + ", " + Utils.readableTime(Utils.getDateTime(arrival))
                 }
                 ListItemText {
                     id: depText
                     mode: item.mode
                     role: "Title"
-                    text: "Platform " + departure_platform + ", " + Qt.formatTime(new Date(1000*departure))
+                    text: "Platform " + departure_platform + ", " + Utils.readableTime(Utils.getDateTime(departure))
                 }
             }
         }
