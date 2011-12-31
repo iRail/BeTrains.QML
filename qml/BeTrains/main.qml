@@ -23,13 +23,13 @@ Window {
             right: parent.right;
             top: statusBar.bottom
         }
-        TabButton { tab: tabLiveboard; text: "Liveboard" }
-        TabButton { tab: tabTravel; text: "Travel" }
+        TabButton { tab: liveboardTab; text: "Liveboard" }
+        TabButton { tab: travelTab; text: "Travel" }
     }
 
     TabGroup {
         id: tabGroup
-        currentTab: tabLiveboard
+        currentTab: liveboardTab
 
         anchors {
             left: parent.left;
@@ -39,11 +39,11 @@ Window {
         }
 
         Page {
-            id: tabLiveboard
+            id: liveboardTab
 
             PageStack {
-                id: pageStackLiveboard
-                toolBar: toolBarLiveboard
+                id: liveboardPageStack
+                toolBar: liveboardToolBar
 
                 Component.onCompleted: {
                     push(liveboardPage);
@@ -51,17 +51,17 @@ Window {
             }
 
             ToolBar {
-                id: toolBarLiveboard
+                id: liveboardToolBar
                 anchors.bottom: parent.bottom
             }
         }
 
         Page {
-            id: tabTravel
+            id: travelTab
 
             PageStack {
-                id: pageStackTravel
-                toolBar: toolBarTravel
+                id: travelPageStack
+                toolBar: travelToolBar
 
                 Component.onCompleted: {
                     push(travelPage)
@@ -69,7 +69,7 @@ Window {
             }
 
             ToolBar {
-                id: toolBarTravel
+                id: travelToolBar
                 anchors.bottom: parent.bottom
             }
         }
