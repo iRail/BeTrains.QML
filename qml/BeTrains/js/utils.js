@@ -23,7 +23,9 @@ function getDateTime(seconds) {
 }
 
 function readableTime(datetime) {
-    return Qt.formatTime(datetime, Qt.DefaultLocaleShortDate)
+    // FIXME: this is a "workaround" as the DefaultLocaleShortDate on
+    // Symbian seems to include seconds...
+    return Qt.formatTime(datetime, "hh:mm")
 }
 
 function getDynamicObject(object, component, parent) {

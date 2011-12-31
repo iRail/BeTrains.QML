@@ -119,7 +119,7 @@ Page {
         onStationChanged: {
             source = ""
             if (station !== "") {
-                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
+                var datetimestring = Qt.formatDateTime(datetime, "UTC:yyyy/MM/dd/hh/mm")
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + datetimestring + ".xml"
             }
         }

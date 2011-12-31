@@ -100,7 +100,7 @@ Page {
 
         function setSource() {
             if (origin !== "" && destination !== "") {
-                var datetimestring = Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
+                var datetimestring = Qt.formatDateTime(datetime, "UTC:yyyy/MM/dd/hh/mm")
                 var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + datetimestring + ".xml"
 
                 // FIXME: this is a work-around, using a separate XMLHttpRequest object so we actually
