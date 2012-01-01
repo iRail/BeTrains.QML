@@ -109,6 +109,7 @@ Page {
         property string destination
         property date datetime
         property bool arrival
+        property string _source: ""
 
         function update() {
             if (origin !== "" && destination !== "") {
@@ -121,22 +122,28 @@ Page {
                 // FIX 1: get access to the model its xml property after having used the source property
                 // FIX 2: use a XPath function to acquire the source of a connection
                 // FIX 3: use a hierarchical ListView (TreeView)
-                var doc = new XMLHttpRequest();
-                doc.onreadystatechange = function() {
-                            if (doc.readyState === XMLHttpRequest.DONE) {
-                                if (doc.status != 200) {
-                                    error = true
-                                    loading = false
-                                } else {
-                                    error = false
-                                    loading = false
-                                    connectionsModel.xml = doc.responseText
+                if (source !== _source) {
+                    var doc = new XMLHttpRequest();
+                    doc.onreadystatechange = function() {
+                                if (doc.readyState === XMLHttpRequest.DONE) {
+                                    if (doc.status != 200) {
+                                        error = true
+                                        loading = false
+                                    } else {
+                                        error = false
+                                        loading = false
+                                        connectionsModel.xml = doc.responseText
+                                    }
                                 }
                             }
-                        }
-                loading = true
-                doc.open("GET", source);
-                doc.send();
+                    loading = true
+                    doc.open("GET", source);
+                    doc.send();
+
+                    // NOTE: this is to prevent redundant fetches when an identical source is configured
+                    // (the XmlListModel doesn't refetch either when passed an identical source, does it?)
+                    _source = source
+                }
             }
         }
 
