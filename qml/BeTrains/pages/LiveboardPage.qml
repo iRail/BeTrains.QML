@@ -8,13 +8,6 @@ Page {
     id: page
     anchors.fill: parent
 
-    onStatusChanged: {
-        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            stationField.text = ""
-            liveboardModel.source = ""
-        }
-    }
-
 
     //
     // Toolbar
@@ -62,13 +55,21 @@ Page {
             margins: platformStyle.paddingMedium
         }
 
+        property alias entering: inactivityTracker.active
         DelayedPropagator {
             id: inactivityTracker
             delay: 750
+            property bool active: false
 
             input: stationField.text
-            onInputChanged: liveboardModel.station = ""
-            onOutputChanged: liveboardModel.station = output
+            onInputChanged: {
+                active = true
+                liveboardModel.station = ""
+            }
+            onOutputChanged: {
+                active = false
+                liveboardModel.station = output
+            }
         }
     }
 
@@ -81,6 +82,7 @@ Page {
             right: parent.right
             margins: platformStyle.paddingMedium
         }
+        visible: if (liveboardModel.valid && !stationField.entering) true; else false
         clip: true
         model: liveboardModel
         delegate: liveboardDelegate
@@ -88,7 +90,7 @@ Page {
 
     Text {
         anchors.centerIn: liveboardView
-        visible: if (liveboardModel.count > 0) false; else true;
+        visible: if (!liveboardModel.valid || stationField.entering || liveboardModel.count <= 0) true; else false
         text: {
             switch (liveboardModel.status) {
             case XmlListModel.Loading:
@@ -96,7 +98,7 @@ Page {
             case XmlListModel.Error:
                 return "Error!"
             case XmlListModel.Ready:
-                if (liveboardModel.source.toString())
+                if (liveboardModel.valid)
                     return "No results"
                 // Deliberate fall-through
             case XmlListModel.Null:
@@ -119,11 +121,12 @@ Page {
         property date datetime: new Date()
 
         onStationChanged: {
-            source = ""
-            if (station !== "") {
+            if (station !== "")
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
-            }
         }
+
+        property bool valid
+        valid: if (station !== "" && status === XmlListModel.Ready) true; else false;
 
         query: "/liveboard/Liveboard/departures"
 

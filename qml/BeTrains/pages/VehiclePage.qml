@@ -9,7 +9,7 @@ Page {
 
     onStatusChanged: {
         if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            vehicleModel.source = ""
+            id = ""
         }
     }
 
@@ -49,7 +49,7 @@ Page {
             fill: parent
             margins: platformStyle.paddingMedium
         }
-
+        visible: vehicleModel.valid
         clip: true
         model: vehicleModel
         delegate: vehicleDelegate
@@ -57,7 +57,7 @@ Page {
 
     Text {
         anchors.centerIn: vehicleView
-        visible: if (vehicleModel.count > 0) false; else true;
+        visible: if (!vehicleModel.valid || vehicleModel.count <= 0) true; else false;
         text: {
             switch (vehicleModel.status) {
             case XmlListModel.Loading:
@@ -84,11 +84,13 @@ Page {
         property date datetime: new Date()
 
         onVehicleChanged: {
-            source = ""
             vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
             if (vehicle !== "")
                 source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
         }
+
+        property bool valid
+        valid: if (vehicle !== "" && status === XmlListModel.Ready) true; else false;
 
         source: ""
         query: "/vehicle/Vehicle/stops"

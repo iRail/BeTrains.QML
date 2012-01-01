@@ -11,8 +11,7 @@ Page {
 
     onStatusChanged: {
         if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            // FIXME: revert this to .source when removing the data fetching workaround
-            connectionModel.xml = ""
+            id = -1
         }
     }
 
@@ -52,6 +51,7 @@ Page {
             fill: parent
             margins: platformStyle.paddingMedium
         }
+        visible: connectionModel.valid
 
         clip: true
         model: connectionModel
@@ -60,7 +60,7 @@ Page {
 
     Text {
         anchors.centerIn: connectionView
-        visible: if (connectionModel.count > 0) false; else true;
+        visible: if (!connectionModel.valid || connectionModel.count <= 0) true; else false;
         text: {
             switch (connectionModel.status) {
             case XmlListModel.Loading:
@@ -84,6 +84,10 @@ Page {
         id: connectionModel
 
         property int id
+
+        property bool valid
+        valid: if (id !== -1 && status === XmlListModel.Ready) true; else false;
+
         query: "/connections/Connections[" + (id + 1) + "]/via"
 
         XmlRole { name: "station"; query: "station/name/string()"; isKey: true }

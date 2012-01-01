@@ -17,17 +17,12 @@ Page {
             connectionsModel.setSource()
         }
         else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            // WORKAROUND: revert this to .source when removing the data fetching workaround
-            // WORKAROUND: we need to fill .xml with dummy data, or all the keys might be the same, in which case
-            // the listview doesn't update (since nothing is changed, and it apparently doesn't get emptied)
-            connectionsModel.xml = '<?xml version="1.0" encoding="UTF-8" ?> <connections />'
+            origin = ""
+            destination = ""
+            datetime = new Date()
+            arrival = false
         }
     }
-
-    // WORKAROUND: properties indicating the status of the XML fetch, as we can't (due to our
-    // workaround) check the XmlListModel for them
-    property bool connectionsModelLoading: false
-    property bool connectionsModelError: false
 
 
     //
@@ -72,6 +67,7 @@ Page {
             fill: parent
             margins: platformStyle.paddingMedium
         }
+        visible: if (connectionsModel.valid) true; else false
 
         clip: true
         model: connectionsModel
@@ -81,12 +77,12 @@ Page {
     Text {
         id: connectionsStatus
         anchors.centerIn: connectionsView
-        visible: if (connectionsModel.count > 0) false; else true;
+        visible: if (!connectionsModel.valid || connectionsModel.count <= 0) true; else false
         text: {
             // WORKAROUND
-            if (connectionsModelLoading)
+            if (connectionsModel.loading)
                 return "Loading..."
-            else if (connectionsModelError)
+            else if (connectionsModel.error)
                 return "Error!"
 
             switch (connectionsModel.status) {
@@ -130,19 +126,28 @@ Page {
                 doc.onreadystatechange = function() {
                             if (doc.readyState === XMLHttpRequest.DONE) {
                                 if (doc.status != 200) {
-                                    connectionsModelError = true
-                                    connectionsModelLoading = false
+                                    error = true
+                                    loading = false
                                 } else {
+                                    error = false
+                                    loading = false
                                     connectionsModel.xml = doc.responseText
-                                    connectionsModelLoading = false
                                 }
                             }
                         }
-                connectionsModelLoading = true
+                loading = true
                 doc.open("GET", source);
                 doc.send();
             }
         }
+
+        // WORKAROUND: properties indicating the status of the XML fetch, as we can't (due to our
+        // workaround) check the XmlListModel for them
+        property bool loading: false
+        property bool error: false
+
+        property bool valid
+        valid: if (origin !== "" && destination !== "" && status === XmlListModel.Ready && !loading && !error) true; else false;
 
         query: "/connections/Connections"
 

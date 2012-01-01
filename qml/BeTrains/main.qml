@@ -81,8 +81,8 @@ Window {
     //
 
     // Statically loaded objects
-    property Page liveboardPage : LiveboardPage {}
-    property Page travelPage : TravelPage {}
+    property Page liveboardPage: LiveboardPage {}
+    property Page travelPage: TravelPage {}
 
     // Dynamically loaded objects
     property Dialog aboutDialog
@@ -113,5 +113,4 @@ Window {
             }
         }
     }
-
 }
