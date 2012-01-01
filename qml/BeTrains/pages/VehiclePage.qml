@@ -92,7 +92,6 @@ Page {
             vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
             if (vehicle !== "")
                 source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
-            console.log(source)
         }
 
         property bool valid

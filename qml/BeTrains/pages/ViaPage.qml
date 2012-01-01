@@ -6,8 +6,8 @@ Page {
     id: page
     anchors.fill: parent
 
-    property alias xml: connectionModel.xml
-    property alias id: connectionModel.id
+    property alias xml: viaModel.xml
+    property alias id: viaModel.id
 
     onStatusChanged: {
         if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
@@ -45,24 +45,24 @@ Page {
     //
 
     ListView {
-        id: connectionView
+        id: viaView
 
         anchors {
             fill: parent
             margins: platformStyle.paddingMedium
         }
-        visible: connectionModel.valid
+        visible: viaModel.valid
 
         clip: true
-        model: connectionModel
-        delegate: connectionDelegate
+        model: viaModel
+        delegate: viaDelegate
     }
 
     Text {
-        anchors.centerIn: connectionView
-        visible: if (!connectionModel.valid || connectionModel.count <= 0) true; else false;
+        anchors.centerIn: viaView
+        visible: if (!viaModel.valid || viaModel.count <= 0) true; else false;
         text: {
-            switch (connectionModel.status) {
+            switch (viaModel.status) {
             case XmlListModel.Loading:
                 return "Loading..."
             case XmlListModel.Error:
@@ -81,7 +81,7 @@ Page {
     //
 
     XmlListModel {
-        id: connectionModel
+        id: viaModel
 
         property int id
 
@@ -102,7 +102,7 @@ Page {
     }
 
     Component {
-        id: connectionDelegate
+        id: viaDelegate
 
         ListItem {
             id: item

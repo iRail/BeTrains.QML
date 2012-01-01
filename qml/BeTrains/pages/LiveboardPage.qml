@@ -65,10 +65,12 @@ Page {
             onInputChanged: {
                 active = true
                 liveboardModel.station = ""
+                liveboardModel.update()
             }
             onOutputChanged: {
                 active = false
                 liveboardModel.station = output
+                liveboardModel.update()
             }
         }
     }
@@ -120,7 +122,7 @@ Page {
         property string station
         property date datetime: new Date()
 
-        onStationChanged: {
+        function update() {
             if (station !== "")
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
         }
