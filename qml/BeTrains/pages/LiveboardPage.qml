@@ -155,23 +155,34 @@ Page {
                     id: platformText
                     mode: item.mode
                     role: "SubTitle"
+                    visible: if (platform !== "") true; else false
                     text: "Platform " + platform
                 }
             }
             Column {
                 anchors.right: parent.right
-                width: Math.max(timeText.width, delayText.width) + platformStyle.graphicSizeSmall
+                width: Math.max(timeText.width, delayText.width)
                 ListItemText {
                     id: timeText
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: -platformStyle.graphicSizeSmall
+                    }
                     mode: item.mode
                     role: "Title"
                     text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: -platformStyle.graphicSizeSmall
+                    }
+                    color: "red"
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
+                    visible: if (delay > 0) true; else false
+                    text: "+" + Utils.readableDuration(delay)
                 }
             }
 

@@ -131,7 +131,9 @@ Page {
                     id: delayText
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
+                    color: "red"
+                    visible: if (delay > 0) true; else false
+                    text: Utils.readableDuration(delay)
                 }
             }
         }
