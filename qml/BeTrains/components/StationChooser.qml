@@ -18,14 +18,13 @@ SelectionDialog {
     XmlListModel {
         id: stationModel
 
-        source: "http://api.irail.be/stations.php"
-        query: "/stations/station"
+        source: "http://data.irail.be/NMBS/Stations.xml"
+        query: "/stations/Stations"
 
-        XmlRole { name: "modelData"; query: "string()"; }
+        XmlRole { name: "modelData"; query: "name/string()"; }
 
-        XmlRole { name: "name"; query: "string()"; }
-        XmlRole { name: "id"; query: "@id/string()"; isKey: true }
-        XmlRole { name: "latitude"; query: "@locationX/string()";}
-        XmlRole { name: "longitude"; query: "@locationY/string()" }
+        XmlRole { name: "name"; query: "name/string()"; }
+        XmlRole { name: "latitude"; query: "lat/number()";}
+        XmlRole { name: "longitude"; query: "long/number()" }
     }
 }
