@@ -32,8 +32,14 @@ function generateDateUrl(datetime) {
     return Qt.formatDateTime(datetime, "yyyy/MM/dd/hh/mm")
 }
 
-function getDynamicObject(object, component, parent) {
-    if (object)
-        return object;
+function loadObjectByComponent(component, parent) {
+    // TODO: handle properties
     return component.createObject(parent)
+}
+
+function loadObjectByPath(path, parent) {
+    // TODO: dynamically load the component?
+    var component = Qt.createComponent("../" + path)
+
+    return loadObjectByComponent(component, parent)
 }

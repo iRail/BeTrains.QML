@@ -40,7 +40,8 @@ Page {
         ToolButton {
             iconSource: "toolbar-menu"
             onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                if (!window.menu)
+                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
                 window.menu.open()
             }
         }
@@ -172,7 +173,8 @@ Page {
             }
 
             onClicked: {
-                vehiclePage = Utils.getDynamicObject(vehiclePage, vehicleComponent, page)
+                if (!vehiclePage)
+                    vehiclePage = Utils.loadObjectByPath("pages/VehiclePage.qml", page)
                 pageStack.push(vehiclePage, {id: vehicle});
             }
         }
@@ -180,12 +182,8 @@ Page {
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property VehiclePage vehiclePage
-    Component {
-        id: vehicleComponent
-        VehiclePage {}
-    }
+    property Page vehiclePage
 }

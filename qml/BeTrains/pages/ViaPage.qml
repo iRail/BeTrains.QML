@@ -33,7 +33,8 @@ Page {
         ToolButton {
             iconSource: "toolbar-menu"
             onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                if (!window.menu)
+                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
                 window.menu.open()
             }
         }

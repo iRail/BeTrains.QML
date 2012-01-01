@@ -77,12 +77,17 @@ Window {
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property LiveboardPage liveboardPage : LiveboardPage {}
-    property TravelPage travelPage : TravelPage {}
+    // Statically loaded objects
+    property Page liveboardPage : LiveboardPage {}
+    property Page travelPage : TravelPage {}
 
+    // Dynamically loaded objects
+    property Dialog aboutDialog
+
+    // In-line defined menu component
     property Menu menu
     Component {
         id: menuComponent
@@ -94,17 +99,19 @@ Window {
                 MenuItem {
                     text: "About"
                     onClicked: {
-                        about = Utils.getDynamicObject(about, aboutComponent, menu)
-                        about.open()
+                        if (!aboutDialog)
+                            aboutDialog = Utils.loadObjectByPath("components/AboutDialog.qml", menu)
+                        aboutDialog.open()
                     }
+                }
+
+                // Quit
+                MenuItem {
+                    text: "Quit"
+                    onClicked: Qt.quit()
                 }
             }
         }
     }
-    property Dialog about
-    Component {
-        id: aboutComponent
 
-        AboutDialog {}
-    }
 }

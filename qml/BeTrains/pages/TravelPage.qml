@@ -28,7 +28,8 @@ Page {
             iconSource: "toolbar-search"
             enabled: originField.text !== "" && destinationField.text !== ""
             onClicked: {
-                connectionsPage = Utils.getDynamicObject(connectionsPage, connectionsComponent, page)
+                if (!connectionsPage)
+                    connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
                 pageStack.push(connectionsPage, {
                                origin: originField.text,
                                destination: destinationField.text,
@@ -42,7 +43,8 @@ Page {
         ToolButton {
             iconSource: "toolbar-menu"
             onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                if (!window.menu)
+                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
                 window.menu.open()
             }
         }
@@ -182,13 +184,8 @@ Page {
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property ConnectionsPage connectionsPage
-    Component {
-        id: connectionsComponent
-
-        ConnectionsPage {}
-    }
+    property Page connectionsPage
 }

@@ -1,6 +1,6 @@
-import "../js/utils.js" as Utils
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../js/utils.js" as Utils
 
 TextField {
     id: field
@@ -19,7 +19,8 @@ TextField {
             id: chooserArea
             anchors.fill: parent
             onClicked: {
-                chooser = Utils.getDynamicObject(chooser, chooserComponent, field)
+                if (!chooser)
+                    chooser = Utils.loadObjectByPath("components/StationChooser.qml", field)
                 chooser.open();
             }
         }
@@ -27,18 +28,8 @@ TextField {
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property StationChooser chooser
-    Component {
-        id: chooserComponent
-
-        StationChooser {
-            onAccepted: {
-                field.text = stationDialog.station
-                field.forceActiveFocus()
-            }
-        }
-    }
+    property Dialog chooser
 }

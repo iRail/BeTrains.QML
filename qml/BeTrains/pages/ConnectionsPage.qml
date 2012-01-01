@@ -53,7 +53,8 @@ Page {
         ToolButton {
             iconSource: "toolbar-menu"
             onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
+                if (!window.menu)
+                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
                 window.menu.open()
             }
         }
@@ -197,7 +198,8 @@ Page {
             onClicked: {
                 if (vias === 0)
                     return;
-                viaPage = Utils.getDynamicObject(viaPage, viaComponent, page)
+                if (!viaPage)
+                    viaPage = Utils.loadObjectByPath("pages/ViaPage.qml", page)
                 pageStack.push(viaPage, {xml: connectionsModel.xml, id: connectionsView.currentIndex});
             }
         }
@@ -205,12 +207,8 @@ Page {
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property ViaPage viaPage
-    Component {
-        id: viaComponent
-        ViaPage {}
-    }
+    property Page viaPage
 }
