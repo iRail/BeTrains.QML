@@ -178,7 +178,7 @@ Page {
             onClicked: {
                 if (!vehiclePage)
                     vehiclePage = Utils.loadObjectByPath("pages/VehiclePage.qml", page)
-                pageStack.push(vehiclePage, {id: vehicle});
+                pageStack.push(vehiclePage, {id: vehicle, datetime: Utils.getDateTime(time)});
             }
         }
     }

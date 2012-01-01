@@ -5,11 +5,16 @@ import "../js/utils.js" as Utils
 Page {
     id: page
     anchors.fill: parent
+
     property alias id: vehicleModel.vehicle
+    property alias datetime: vehicleModel.datetime
 
     onStatusChanged: {
-        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+        if (status === PageStatus.Activating) {
+            vehicleModel.update()
+        } else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
             id = ""
+            datetime = new Date()
         }
     }
 
@@ -81,12 +86,13 @@ Page {
         id: vehicleModel
 
         property string vehicle
-        property date datetime: new Date()
+        property date datetime
 
-        onVehicleChanged: {
+        function update() {
             vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
             if (vehicle !== "")
                 source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
+            console.log(source)
         }
 
         property bool valid

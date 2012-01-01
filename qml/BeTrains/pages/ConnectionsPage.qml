@@ -14,9 +14,8 @@ Page {
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
-            connectionsModel.setSource()
-        }
-        else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+            connectionsModel.update()
+        } else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
             origin = ""
             destination = ""
             datetime = new Date()
@@ -111,7 +110,7 @@ Page {
         property date datetime
         property bool arrival
 
-        function setSource() {
+        function update() {
             if (origin !== "" && destination !== "") {
                 var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + Utils.generateDateUrl(datetime) + ".xml"
                 if (arrival)
