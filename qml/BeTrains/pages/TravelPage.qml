@@ -12,56 +12,17 @@ Page {
 
 
     //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
-        }
-
-        // Make request
-        ToolButton {
-            iconSource: "toolbar-search"
-            enabled: originField.text !== "" && destinationField.text !== ""
-            onClicked: {
-                if (!connectionsPage)
-                    connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
-                pageStack.push(connectionsPage, {
-                               origin: originField.text,
-                               destination: destinationField.text,
-                               datetime: typeNowButton.checked ? new Date() : datetime,
-                               arrival: typeArrivalButton.checked
-                });
-            }
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                if (!window.menu)
-                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
-                window.menu.open()
-            }
-        }
-    }
-
-
-    //
     // Contents
     //
 
     Column {
-        id: contents
+        id: configuration
         spacing: platformStyle.paddingMedium
 
-        width: parent.width
         anchors {
-            fill: parent
+            left: parent.left
+            right: parent.right
+            top: parent.top
             margins: platformStyle.paddingMedium
         }
 
@@ -181,6 +142,52 @@ Page {
             }
         }
     }
+
+    ListView {
+        id: historyView
+
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: configuration.bottom
+            bottom: parent.bottom
+            topMargin: platformStyle.paddingLarge
+        }
+
+        clip: true
+        model: ListModel {
+            ListElement {
+                contents: "Look up"
+            }
+        }
+        delegate: Component {
+            ListItem {
+                ListItemText {
+                    text: contents
+                }
+                onClicked: {
+                    if (!connectionsPage)
+                        connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
+
+                    if (originField.text === "" || destinationField.text === "") {
+                        banner.text = "Please fill out both station fields"
+                        banner.open()
+                    } else {
+                        pageStack.push(connectionsPage, {
+                                       origin: originField.text,
+                                       destination: destinationField.text,
+                                       datetime: typeNowButton.checked ? new Date() : datetime,
+                                       arrival: typeArrivalButton.checked
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    InfoBanner {
+         id: banner
+     }
 
 
     //

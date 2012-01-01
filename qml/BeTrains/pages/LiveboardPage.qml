@@ -10,38 +10,6 @@ Page {
 
 
     //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
-        }
-
-        // Refresh
-        ToolButton {
-            id: refreshButton
-            iconSource: "toolbar-refresh"
-            onClicked: liveboardModel.reload()
-            enabled: stationField.text.length > 0
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                if (!window.menu)
-                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
-                window.menu.open()
-            }
-        }
-    }
-
-
-    //
     // Contents
     //
 

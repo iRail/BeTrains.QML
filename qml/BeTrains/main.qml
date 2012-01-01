@@ -11,66 +11,75 @@ Window {
     // Window structure
     //
 
-    StatusBar {
-        id: statusBar
-        anchors.top: window.top
-    }
-
-    TabBarLayout {
-        id: tabBarLayout
-        anchors {
-            left: parent.left;
-            right: parent.right;
-            top: statusBar.bottom
-        }
-        TabButton { tab: liveboardTab; text: "Liveboard" }
-        TabButton { tab: travelTab; text: "Travel" }
-    }
-
-    TabGroup {
-        id: tabGroup
-        currentTab: liveboardTab
-
-        anchors {
-            left: parent.left;
-            right: parent.right
-            top: tabBarLayout.bottom;
-            bottom: parent.bottom
-        }
+    PageStackWindow {
+        initialPage: mainPage
+        showStatusBar: true
+        showToolBar: true
 
         Page {
-            id: liveboardTab
+            id: mainPage
+            tools: toolBarLayout
 
-            PageStack {
-                id: liveboardPageStack
-                toolBar: liveboardToolBar
-
-                Component.onCompleted: {
-                    push(liveboardPage);
+            TabBarLayout {
+                id: tabBarLayout
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
                 }
             }
 
-            ToolBar {
-                id: liveboardToolBar
-                anchors.bottom: parent.bottom
-            }
-        }
+            TabGroup {
+                id: tabGroup
+                currentTab: liveboardStack
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    top: tabBarLayout.bottom
+                    bottom: parent.bottom
+                }
 
-        Page {
-            id: travelTab
+                PageStack {
+                    id: liveboardStack
+                    Component.onCompleted: liveboardStack.push(liveboardPage)
+                }
 
-            PageStack {
-                id: travelPageStack
-                toolBar: travelToolBar
-
-                Component.onCompleted: {
-                    push(travelPage)
+                PageStack {
+                    id: travelStack
+                    Component.onCompleted: travelStack.push(travelPage)
                 }
             }
+        }
+    }
 
-            ToolBar {
-                id: travelToolBar
-                anchors.bottom: parent.bottom
+
+    //
+    // Toolbar
+    //
+
+    ToolBarLayout {
+        id: toolBarLayout
+
+        // Back buton
+        ToolButton {
+            property bool closeButton: tabGroup.currentTab.depth <= 1
+            flat: true
+            iconSource: closeButton ? "icons/close.svg" : "toolbar-back"
+            onClicked: closeButton ? Qt.quit() : tabGroup.currentTab.pop();
+        }
+
+        // Tab bar
+        ButtonRow {
+            TabButton { tab: liveboardStack; text: "Liveboard" }
+            TabButton { tab: travelStack; text: "Travel" }
+        }
+
+        // Menu
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: {
+                if (!window.menu)
+                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
+                window.menu.open()
             }
         }
     }

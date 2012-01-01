@@ -20,30 +20,6 @@ Page {
 
 
     //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.pop()
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                if (!window.menu)
-                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
-                window.menu.open()
-            }
-        }
-    }
-
-
-    //
     // Contents
     //
 
