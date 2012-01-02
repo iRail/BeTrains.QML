@@ -8,7 +8,9 @@ Page {
     id: page
     anchors.fill: parent
 
-    property date datetime: new Date()
+    property date __datetime: new Date()
+    property bool __timeSpecified: false
+    property bool __departure: true
 
 
     //
@@ -63,82 +65,23 @@ Page {
             }
         }
 
-        ButtonRow {
-            id: typeGroup
+        SelectionListItem {
+            title: (__departure ? "Departure" : "Arrival")
+            subTitle:  (__timeSpecified ? (__datetime.toLocaleString()) : "Right now")
+
+            function __onDialogAccepted() {
+                __departure = timeDialog.departure
+                __datetime = timeDialog.datetime
+                __timeSpecified = timeDialog.specified
+            }
+
             width: parent.width
-            exclusive: true
-            checkedButton: typeNowButton
-
-            ToolButton {
-                id: typeDepartureButton
-                text: "Depart"
-            }
-            ToolButton {
-                id: typeNowButton
-                text: "Now"
-            }
-            ToolButton {
-                id: typeArrivalButton
-                text: "Arrive";
-            }
-        }
-
-        Row {
-            width: parent.width
-            spacing: platformStyle.paddingMedium
-
-            Button {
-                id: dateField
-                text: datetime.toLocaleDateString()
-                enabled: !typeNowButton.checked
-                width: (parent.width - platformStyle.paddingMedium) / 2
-
-                DatePickerDialog {
-                    id: dateDialog
-                    titleText: "Select the date"
-                    rejectButtonText: "Cancel"
-                    acceptButtonText: "Ok"
-
-                    Component.onCompleted: {
-                        year = datetime.getFullYear()
-                        month = datetime.getMonth()
-                        day = datetime.getDate()
-                    }
-
-                    onAccepted: datetime = new Date(year, month, day, datetime.getHours(), datetime.getMinutes(), datetime.getSeconds(), datetime.getMilliseconds())
+            onClicked: {
+                if (!timeDialog) {
+                    timeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
+                    timeDialog.accepted.connect(__onDialogAccepted)
                 }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: dateDialog.open()
-                }
-            }
-
-            Button {
-                id: timeField
-                text: Utils.readableTime(datetime)
-                enabled: !typeNowButton.checked
-                width: (parent.width - platformStyle.paddingMedium) / 2
-
-                TimePickerDialog {
-                    id: timeDialog
-                    titleText: "Select the time"
-                    rejectButtonText: "Cancel"
-                    acceptButtonText: "Ok"
-
-                    Component.onCompleted: {
-                        hour = datetime.getHours()
-                        minute = datetime.getMinutes()
-                        second = datetime.getSeconds()
-                    }
-
-                    onAccepted: datetime = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate(), hour, minute, second, 0)
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: timeDialog.open()
-                }
+                timeDialog.open()
             }
         }
     }
@@ -195,4 +138,5 @@ Page {
     //
 
     property Page connectionsPage
+    property Dialog timeDialog
 }

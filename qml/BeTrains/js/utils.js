@@ -37,7 +37,7 @@ function loadObjectByComponent(component, parent) {
     return component.createObject(parent)
 }
 
-function loadObjectByPath(path, parent) {
+function loadObjectByPath(path, parent, properties) {
     // TODO: dynamically load the component?
     var component = Qt.createComponent("../" + path)
 
