@@ -36,12 +36,12 @@ Page {
             onInputChanged: {
                 active = true
                 liveboardModel.station = ""
-                liveboardModel.update()
+                liveboardModel.update(false)
             }
             onOutputChanged: {
                 active = false
                 liveboardModel.station = output
-                liveboardModel.update()
+                liveboardModel.update(false)
             }
         }
     }
@@ -70,15 +70,6 @@ Page {
         header: liveboardHeader
     }
 
-    Component {
-        id: liveboardHeader
-
-        PullDownHeader {
-            view: liveboardView
-            onPulled: liveboardModel.update()
-        }
-    }
-
     Text {
         anchors.centerIn: liveboardView
         visible: if (!liveboardModel.valid || liveboardSearch.entering || liveboardModel.count <= 0) true; else false
@@ -100,6 +91,15 @@ Page {
         font.pixelSize: platformStyle.fontSizeLarge
     }
 
+    Component {
+        id: liveboardHeader
+
+        PullDownHeader {
+            view: liveboardView
+            onPulled: liveboardModel.update(true)
+        }
+    }
+
     BusyIndicator {
         anchors.centerIn: liveboardView
         visible: if (liveboardModel.status === XmlListModel.Loading) true; else false
@@ -119,12 +119,12 @@ Page {
         property string station
         property date datetime: new Date()
 
-        function update() {
+        function update(forceReload) {
             if (station !== "") {
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
 
                 // If the URL is identical, force a reload
-                if (status === XmlListModel.Ready)
+                if (forceReload && status === XmlListModel.Ready)
                     reload()
             }
         }

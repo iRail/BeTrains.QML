@@ -119,8 +119,9 @@ Page {
                         pageStack.push(connectionsPage, {
                                        origin: originField.searchText,
                                        destination: destinationField.searchText,
-                                       datetime: typeNowButton.checked ? new Date() : datetime,
-                                       arrival: typeArrivalButton.checked
+                                       datetime: __timeSpecified ? __datetime : new Date(),
+                                       departure: __departure,
+                                       allowReload: !__timeSpecified
                         });
                     }
                 }
@@ -137,6 +138,6 @@ Page {
     // Objects
     //
 
-    property variant connectionsPage
+    property variant connectionsPage: ConnectionsPage { }
     property variant timeDialog
 }

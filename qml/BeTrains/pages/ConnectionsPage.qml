@@ -10,16 +10,18 @@ Page {
     property alias origin: connectionsModel.origin
     property alias destination: connectionsModel.destination
     property alias datetime: connectionsModel.datetime
-    property alias arrival: connectionsModel.arrival
+    property alias departure: connectionsModel.departure
+    property bool allowReload
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
-            connectionsModel.update()
+            connectionsModel.update(false)
         } else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
             origin = ""
             destination = ""
             datetime = new Date()
-            arrival = false
+            allowReload = true
+            departure = true
         }
     }
 
@@ -40,6 +42,7 @@ Page {
         clip: true
         model: connectionsModel
         delegate: connectionsDelegate
+        header: connectionsHeader
     }
 
     Text {
@@ -66,6 +69,16 @@ Page {
         font.pixelSize: platformStyle.fontSizeLarge
     }
 
+    Component {
+        id: connectionsHeader
+
+        PullDownHeader {
+            enabled: allowReload
+            view: connectionsView
+            onPulled: connectionsModel.update(true)
+        }
+    }
+
     BusyIndicator {
         anchors.centerIn: connectionsView
         visible: if (connectionsModel.status === XmlListModel.Loading || connectionsModel.loading) true; else false
@@ -85,13 +98,13 @@ Page {
         property string origin
         property string destination
         property date datetime
-        property bool arrival
+        property bool departure
         property string _source: ""
 
-        function update() {
+        function update(forceReload) {
             if (origin !== "" && destination !== "") {
                 var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + Utils.generateDateUrl(datetime) + ".xml"
-                if (arrival)
+                if (!departure)
                     source = source + "?timeSel=arrival"
 
                 // WORKAROUND: this is a work-around, using a separate XMLHttpRequest object so we actually
@@ -99,7 +112,7 @@ Page {
                 // FIX 1: get access to the model its xml property after having used the source property
                 // FIX 2: use a XPath function to acquire the source of a connection
                 // FIX 3: use a hierarchical ListView (TreeView)
-                if (source !== _source) {
+                if (forceReload || source !== _source) {
                     var doc = new XMLHttpRequest();
                     doc.onreadystatechange = function() {
                                 if (doc.readyState === XMLHttpRequest.DONE) {

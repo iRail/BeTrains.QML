@@ -10,7 +10,12 @@ Item {
     property bool __alreadyPulled: false
     signal pulled()
 
+    visible: enabled
+
     function __onContentYChanged() {
+        if (!enabled)
+            return
+
         if (__alreadyPulled && view.contentY === 0) {
             pulled()
             __alreadyPulled = false;
