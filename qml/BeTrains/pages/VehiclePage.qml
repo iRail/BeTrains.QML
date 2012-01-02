@@ -131,14 +131,17 @@ Page {
                     right: parent.right
                     rightMargin: platformStyle.paddingMedium
                 }
+                width: Math.max(timeText.width, delayText.width)
                 ListItemText {
                     id: timeText
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "Title"
                     text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "SubTitle"
                     color: "red"
