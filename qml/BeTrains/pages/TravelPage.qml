@@ -137,6 +137,6 @@ Page {
     // Objects
     //
 
-    property Page connectionsPage
-    property Dialog timeDialog
+    property variant connectionsPage
+    property variant timeDialog
 }

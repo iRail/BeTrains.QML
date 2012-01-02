@@ -177,5 +177,5 @@ Page {
     // Objects
     //
 
-    property Page vehiclePage
+    property variant vehiclePage
 }

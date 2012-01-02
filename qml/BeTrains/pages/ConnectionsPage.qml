@@ -208,5 +208,5 @@ Page {
     // Objects
     //
 
-    property Page viaPage
+    property variant viaPage
 }

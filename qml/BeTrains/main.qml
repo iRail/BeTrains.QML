@@ -77,14 +77,14 @@ Window {
     //
 
     // Statically loaded objects
-    property Page liveboardPage: LiveboardPage {}
-    property Page travelPage: TravelPage {}
+    property variant liveboardPage: LiveboardPage {}
+    property variant travelPage: TravelPage {}
 
     // Dynamically loaded objects
-    property Dialog aboutDialog
+    property variant aboutDialog
 
     // In-line defined menu component
-    property Menu menu
+    property variant menu
     Component {
         id: menuComponent
 
