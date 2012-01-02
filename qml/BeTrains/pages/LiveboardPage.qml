@@ -152,6 +152,9 @@ Page {
             subItemIndicator: true
 
             Column {
+                anchors.fill: item.paddingItem
+                id: column1
+
                 ListItemText {
                     id: stationText
                     mode: item.mode
@@ -167,24 +170,24 @@ Page {
                 }
             }
             Column {
-                anchors.right: parent.right
+                id: column2
+                anchors {
+                    top: column1.top
+                    right: parent.right
+                    // FIXME: don't use platformStyle.paddingX, but get the padding of item.paddingItem
+                    rightMargin: platformStyle.graphicSizeSmall + platformStyle.paddingSmall
+                }
                 width: Math.max(timeText.width, delayText.width)
                 ListItemText {
                     id: timeText
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: -platformStyle.graphicSizeSmall
-                    }
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "Title"
                     text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: -platformStyle.graphicSizeSmall
-                    }
+                    anchors.horizontalCenter: parent.horizontalCenter
                     color: "red"
                     mode: item.mode
                     role: "SubTitle"

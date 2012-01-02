@@ -169,6 +169,9 @@ Page {
             subItemIndicator: if (vias > 0) true; else false;
 
             Column {
+                anchors.fill: item.paddingItem
+                id: column1
+
                 ListItemText {
                     id: connectionText
                     mode: item.mode
@@ -183,24 +186,24 @@ Page {
                 }
             }
             Column {
-                anchors.right: parent.right
+                id: column2
+                anchors {
+                    top: column1.top
+                    right: parent.right
+                    rightMargin: platformStyle.graphicSizeSmall + platformStyle.paddingSmall
+                }
+
                 width: Math.max(timeText.width, delayText.width)
                 ListItemText {
                     id: timeText
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: -platformStyle.graphicSizeSmall
-                    }
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "Title"
                     text: Utils.readableTime(Utils.getDateTime(departure))
                 }
                 ListItemText {
                     id: delayText
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: -platformStyle.graphicSizeSmall
-                    }
+                    anchors.horizontalCenter: parent.horizontalCenter
                     color: "red"
                     mode: item.mode
                     role: "SubTitle"
