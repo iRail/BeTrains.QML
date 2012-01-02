@@ -35,16 +35,16 @@ Page {
                 width: parent.width - swapButton.width - platformStyle.paddingMedium
                 spacing: platformStyle.paddingSmall
 
-                StationField {
+                StackableSearchBox {
                     id: originField
-                    placeholderText: "Origin..."
+                    placeHolderText: "Origin..."
                     width: parent.width
                     KeyNavigation.tab: destinationField
                 }
 
-                StationField {
+                StackableSearchBox {
                     id: destinationField
-                    placeholderText: "Destination..."
+                    placeHolderText: "Destination..."
                     width: parent.width
                 }
             }
@@ -56,8 +56,8 @@ Page {
 
                 onClicked: {
                     var temp = destinationField.text
-                    destinationField.text = originField.text
-                    originField.text = temp
+                    destinationField.text = originField.searchText
+                    originField.searchText = temp
                     swapButton.focus = true
                 }
             }
@@ -169,13 +169,13 @@ Page {
                     if (!connectionsPage)
                         connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
 
-                    if (originField.text === "" || destinationField.text === "") {
+                    if (originField.searchText === "" || destinationField.searchText === "") {
                         banner.text = "Please fill out both station fields"
                         banner.open()
                     } else {
                         pageStack.push(connectionsPage, {
-                                       origin: originField.text,
-                                       destination: destinationField.text,
+                                       origin: originField.searchText,
+                                       destination: destinationField.searchText,
                                        datetime: typeNowButton.checked ? new Date() : datetime,
                                        arrival: typeArrivalButton.checked
                         });

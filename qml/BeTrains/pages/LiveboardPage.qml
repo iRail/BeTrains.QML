@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 import "../components"
 import "../js/utils.js" as Utils
 
@@ -13,15 +14,14 @@ Page {
     // Contents
     //
 
-    StationField {
-        id: stationField
-        placeholderText: "Station..."
+    SearchBox {
+        id: liveboardHeader
+        width: parent.width
         anchors {
-            top: parent.top
             left: parent.left
             right: parent.right
-            margins: platformStyle.paddingMedium
         }
+        placeHolderText: "Station..."
 
         property alias entering: inactivityTracker.active
         DelayedPropagator {
@@ -29,7 +29,7 @@ Page {
             delay: 750
             property bool active: false
 
-            input: stationField.text
+            input: liveboardHeader.searchText
             onInputChanged: {
                 active = true
                 liveboardModel.station = ""
@@ -46,13 +46,13 @@ Page {
     ListView {
         id: liveboardView
         anchors {
-            top: stationField.bottom
+            top: liveboardHeader.bottom
             bottom: parent.bottom
             left: parent.left
             right: parent.right
             margins: platformStyle.paddingMedium
         }
-        visible: if (liveboardModel.valid && !stationField.entering) true; else false
+        visible: if (liveboardModel.valid && !liveboardHeader.entering) true; else false
         clip: true
         model: liveboardModel
         delegate: liveboardDelegate
@@ -60,7 +60,7 @@ Page {
 
     Text {
         anchors.centerIn: liveboardView
-        visible: if (!liveboardModel.valid || stationField.entering || liveboardModel.count <= 0) true; else false
+        visible: if (!liveboardModel.valid || liveboardHeader.entering || liveboardModel.count <= 0) true; else false
         text: {
             switch (liveboardModel.status) {
             case XmlListModel.Loading:
