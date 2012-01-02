@@ -20,23 +20,10 @@ Window {
             id: mainPage
             tools: toolBarLayout
 
-            TabBarLayout {
-                id: tabBarLayout
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-            }
-
             TabGroup {
                 id: tabGroup
                 currentTab: liveboardStack
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                    top: tabBarLayout.bottom
-                    bottom: parent.bottom
-                }
+                anchors.fill: parent
 
                 PageStack {
                     id: liveboardStack
