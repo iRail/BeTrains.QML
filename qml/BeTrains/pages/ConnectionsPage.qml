@@ -8,7 +8,9 @@ Page {
     anchors.fill: parent
 
     property alias origin: connectionsModel.origin
+    property string __resolvedOrigin
     property alias destination: connectionsModel.destination
+    property string __resolvedDestination
     property alias datetime: connectionsModel.datetime
     property alias departure: connectionsModel.departure
     property bool lockDatetime
@@ -30,11 +32,62 @@ Page {
     // Contents
     //
 
+    Column {
+        id: information
+        width: parent.width
+        anchors {
+            top: parent.top
+            bottomMargin: platformStyle.paddingLarge
+            margins: platformStyle.paddingMedium
+        }
+
+        Row {
+            width: parent.width
+            Text {
+                text: "From: "
+                color: platformStyle.colorDisabledLight
+                font.pixelSize: platformStyle.fontSizeLarge
+            }
+            Text {
+                text: {
+                    if (connectionsModel.valid && connectionsModel.count > 0) {
+                        return __resolvedOrigin
+                    } else
+                        return origin
+                }
+
+                color: platformStyle.colorNormalLight
+                font.pixelSize: platformStyle.fontSizeLarge
+            }
+        }
+
+        Row {
+            width: parent.width
+            Text {
+                text: "To: "
+                color: platformStyle.colorDisabledLight
+                font.pixelSize: platformStyle.fontSizeLarge
+            }
+            Text {
+                text: {
+                    if (connectionsModel.valid && connectionsModel.count > 0) {
+                        return __resolvedDestination
+                    } else
+                        return destination
+                }
+
+                color: platformStyle.colorNormalLight
+                font.pixelSize: platformStyle.fontSizeLarge
+            }
+        }
+    }
+
     ListView {
         id: connectionsView
-
+        width: parent.width
         anchors {
-            fill: parent
+            top: information.bottom
+            bottom: parent.bottom
             margins: platformStyle.paddingMedium
         }
         visible: if (connectionsModel.valid) true; else false
@@ -168,21 +221,27 @@ Page {
             id: item
             subItemIndicator: if (vias > 0) true; else false;
 
+            // FIXME: ugly hack to access the model its data
+            Component.onCompleted: {
+                __resolvedOrigin = origin
+                __resolvedDestination = destination
+            }
+
             Column {
                 anchors.fill: item.paddingItem
                 id: column1
 
                 ListItemText {
-                    id: connectionText
+                    id: viaText
                     mode: item.mode
                     role: "Title"
-                    text: origin + " to " + destination
+                    text: (vias > 0 ? ("Via " + vias + " others") : "Direct connection")
                 }
                 ListItemText {
                     id: durationText
                     mode: item.mode
                     role: "SubTitle"
-                    text: Utils.readableDuration(duration) + " en route, " + (vias > 0 ? ("via " + vias + " others") : "direct")
+                    text: Utils.readableDuration(duration) + " en route"
                 }
             }
             Column {
