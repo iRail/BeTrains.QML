@@ -9,13 +9,16 @@ Page {
     id: page
     anchors.fill: parent
 
+    property alias datetime: liveboardModel.datetime
+    property alias station: liveboardModel.station
+
 
     //
     // Contents
     //
 
     SearchBox {
-        id: liveboardHeader
+        id: liveboardSearch
         width: parent.width
         anchors {
             left: parent.left
@@ -29,7 +32,7 @@ Page {
             delay: 750
             property bool active: false
 
-            input: liveboardHeader.searchText
+            input: liveboardSearch.searchText
             onInputChanged: {
                 active = true
                 liveboardModel.station = ""
@@ -43,24 +46,41 @@ Page {
         }
     }
 
+    Timer {
+        id: liveboardRefreshTimer
+        interval: 50; running: false; repeat: false
+        onTriggered: {
+            console.log("Refresh")
+        }
+    }
+
     ListView {
         id: liveboardView
         anchors {
-            top: liveboardHeader.bottom
+            top: liveboardSearch.bottom
             bottom: parent.bottom
             left: parent.left
             right: parent.right
             margins: platformStyle.paddingMedium
         }
-        visible: if (liveboardModel.valid && !liveboardHeader.entering) true; else false
+        visible: if (liveboardModel.valid && !liveboardSearch.entering) true; else false
         clip: true
         model: liveboardModel
         delegate: liveboardDelegate
+        header: liveboardHeader
+    }
+
+    Component {
+        id: liveboardHeader
+
+        PullDownHeader {
+            view: liveboardView
+        }
     }
 
     Text {
         anchors.centerIn: liveboardView
-        visible: if (!liveboardModel.valid || liveboardHeader.entering || liveboardModel.count <= 0) true; else false
+        visible: if (!liveboardModel.valid || liveboardSearch.entering || liveboardModel.count <= 0) true; else false
         text: {
             switch (liveboardModel.status) {
             case XmlListModel.Error:
