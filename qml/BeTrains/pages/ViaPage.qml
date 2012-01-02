@@ -23,11 +23,7 @@ Page {
 
     ListView {
         id: viaView
-
-        anchors {
-            fill: parent
-            margins: platformStyle.paddingMedium
-        }
+        anchors.fill: parent
         visible: viaModel.valid
 
         clip: true

@@ -61,7 +61,6 @@ Page {
             bottom: parent.bottom
             left: parent.left
             right: parent.right
-            margins: platformStyle.paddingMedium
         }
         visible: if (liveboardModel.valid && !liveboardSearch.entering) true; else false
         clip: true

@@ -57,8 +57,8 @@ Page {
                 iconSource: "../icons/swap.png"
 
                 onClicked: {
-                    var temp = destinationField.text
-                    destinationField.text = originField.searchText
+                    var temp = destinationField.searchText
+                    destinationField.searchText = originField.searchText
                     originField.searchText = temp
                     swapButton.focus = true
                 }
@@ -103,14 +103,25 @@ Page {
         clip: true
         model: ListModel {
             ListElement {
-                contents: "Look up"
+                contents: "Favourite..."
+            }
+            ListElement {
+                contents: "History..."
             }
         }
-        delegate: Component {
+        header: Component {
             ListItem {
+                id: item
+                subItemIndicator: true
+
+                // FIXME: silence some errors
+                property int index: 0
+
                 ListItemText {
-                    text: contents
+                    anchors.fill: item.paddingItem
+                    text: "New query"
                 }
+
                 onClicked: {
                     if (!connectionsPage)
                         connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
@@ -127,6 +138,17 @@ Page {
                                        lockDatetime: __timeSpecified
                         });
                     }
+                }
+            }
+        }
+
+        delegate: Component {
+            ListItem {
+                id: item
+                ListItemText {
+                    anchors.fill: item.paddingItem
+                    text: contents
+                    color: platformStyle.colorDisabledLight
                 }
             }
         }
