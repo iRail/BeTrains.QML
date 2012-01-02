@@ -80,7 +80,7 @@ CommonDialog {
                 id: dateField
                 text: datetime.toLocaleDateString()
                 enabled: timeSpecifiedSwitch.checked
-                width: (parent.width - platformStyle.paddingMedium) / 2
+                width: (parent.width - parent.spacing) / 2
 
                 DatePickerDialog {
                     id: dateDialog
@@ -107,7 +107,7 @@ CommonDialog {
                 id: timeField
                 text: Utils.readableTime(datetime)
                 enabled: timeSpecifiedSwitch.checked
-                width: (parent.width - platformStyle.paddingMedium) / 2
+                width: (parent.width - parent.spacing) / 2
 
                 TimePickerDialog {
                     id: timeDialog

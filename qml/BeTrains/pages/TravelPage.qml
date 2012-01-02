@@ -34,7 +34,7 @@ Page {
 
             Column {
                 id: stationColumn
-                width: parent.width - swapButton.width - platformStyle.paddingMedium
+                width: parent.width - swapButton.width - parent.spacing
                 spacing: platformStyle.paddingSmall
 
                 StackableSearchBox {
