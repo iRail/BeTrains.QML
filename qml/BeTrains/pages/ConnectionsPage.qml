@@ -8,9 +8,7 @@ Page {
     anchors.fill: parent
 
     property alias origin: connectionsModel.origin
-    property string __resolvedOrigin
     property alias destination: connectionsModel.destination
-    property string __resolvedDestination
     property alias datetime: connectionsModel.datetime
     property alias departure: connectionsModel.departure
     property bool lockDatetime
@@ -50,9 +48,9 @@ Page {
             }
             Text {
                 text: {
-                    if (connectionsModel.valid && connectionsModel.count > 0) {
-                        return __resolvedOrigin
-                    } else
+                    if (connectionsModel.valid && connectionsModel.count > 0)
+                        return connectionsModel.get(0).origin
+                    else
                         return origin
                 }
 
@@ -70,9 +68,9 @@ Page {
             }
             Text {
                 text: {
-                    if (connectionsModel.valid && connectionsModel.count > 0) {
-                        return __resolvedDestination
-                    } else
+                    if (connectionsModel.valid && connectionsModel.count > 0)
+                        return connectionsModel.get(0).destination
+                    else
                         return destination
                 }
 
@@ -220,12 +218,6 @@ Page {
         ListItem {
             id: item
             subItemIndicator: if (vias > 0) true; else false;
-
-            // FIXME: ugly hack to access the model its data
-            Component.onCompleted: {
-                __resolvedOrigin = origin
-                __resolvedDestination = destination
-            }
 
             Column {
                 anchors.fill: item.paddingItem
