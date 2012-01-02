@@ -49,21 +49,29 @@ Page {
         text: {
             // WORKAROUND
             if (connectionsModel.loading)
-                return "Loading..."
+                return ""
             else if (connectionsModel.error)
                 return "Error!"
 
             switch (connectionsModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
             case XmlListModel.Error:
                 return "Error!"
             case XmlListModel.Ready:
                 return "No results"
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    BusyIndicator {
+        anchors.centerIn: connectionsView
+        visible: if (connectionsModel.status === XmlListModel.Loading || connectionsModel.loading) true; else false
+        running: true
+        height: connectionsView.height / 10
+        width: height
     }
 
 

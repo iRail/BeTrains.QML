@@ -39,16 +39,24 @@ Page {
         visible: if (!viaModel.valid || viaModel.count <= 0) true; else false;
         text: {
             switch (viaModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
             case XmlListModel.Error:
                 return "Error!"
             case XmlListModel.Ready:
                 return "No results"
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    BusyIndicator {
+        anchors.centerIn: viaView
+        visible: if (viaModel.status === XmlListModel.Loading) true; else false
+        running: true
+        height: viaView.height / 10
+        width: height
     }
 
 

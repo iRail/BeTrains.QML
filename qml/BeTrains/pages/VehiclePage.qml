@@ -41,16 +41,24 @@ Page {
         visible: if (!vehicleModel.valid || vehicleModel.count <= 0) true; else false;
         text: {
             switch (vehicleModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
             case XmlListModel.Error:
                 return "Error!"
             case XmlListModel.Ready:
                 return "No results"
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    BusyIndicator {
+        anchors.centerIn: vehicleView
+        visible: if (vehicleModel.status === XmlListModel.Loading) true; else false
+        running: true
+        height: vehicleView.height / 10
+        width: height
     }
 
 

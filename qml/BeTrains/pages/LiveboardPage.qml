@@ -63,8 +63,6 @@ Page {
         visible: if (!liveboardModel.valid || liveboardHeader.entering || liveboardModel.count <= 0) true; else false
         text: {
             switch (liveboardModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
             case XmlListModel.Error:
                 return "Error!"
             case XmlListModel.Ready:
@@ -73,10 +71,20 @@ Page {
                 // Deliberate fall-through
             case XmlListModel.Null:
                 return "Enter a station"
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    BusyIndicator {
+        anchors.centerIn: liveboardView
+        visible: if (liveboardModel.status === XmlListModel.Loading) true; else false
+        running: true
+        height: liveboardView.height / 10
+        width: height
     }
 
 
