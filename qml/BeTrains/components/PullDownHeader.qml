@@ -7,14 +7,33 @@ Item {
     width: view.width
     height: 0
 
-    opacity: {
-        if (-view.contentY > 100) {
-            return 1
+    property bool __alreadyPulled: false
+    signal pulled()
+
+    function __onContentYChanged() {
+        if (__alreadyPulled && view.contentY === 0) {
+            pulled()
+            __alreadyPulled = false;
+        }
+
+        if (__alreadyPulled || -view.contentY > 100) {
+            __alreadyPulled = true
+            opacity = 1
+            refreshIcon.rotation = 180
+            refreshText.text = "Refreshing!"
         } else if (-view.contentY > 10) {
-            return 0.5
+            opacity = 0.5
+            refreshIcon.rotation = 0
+            refreshText.text = "Pull down to refresh..."
         } else
-            return 0
+            opacity = 0
+
     }
+
+    Component.onCompleted: {
+        view.contentYChanged.connect(__onContentYChanged)
+    }
+
     Behavior on opacity {
         NumberAnimation {
             duration: 100
@@ -41,12 +60,6 @@ Item {
 
             source: privateStyle.imagePath("toolbar-refresh", window.platformInverted)
 
-            rotation: {
-                if (-view.contentY > 100)
-                    return 270
-                else
-                    return 90
-            }
             Behavior on rotation {
                 NumberAnimation {
                     duration: 250
@@ -59,12 +72,6 @@ Item {
 
             color: platformStyle.colorNormalLight
 
-            text: {
-                if (-view.contentY > 100)
-                    return "Release to refresh..."
-                else
-                    return "Pull to refresh..."
-            }
         }
     }
 }

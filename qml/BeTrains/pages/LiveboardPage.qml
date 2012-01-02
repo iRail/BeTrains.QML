@@ -75,6 +75,7 @@ Page {
 
         PullDownHeader {
             view: liveboardView
+            onPulled: liveboardModel.update()
         }
     }
 
@@ -119,8 +120,13 @@ Page {
         property date datetime: new Date()
 
         function update() {
-            if (station !== "")
+            if (station !== "") {
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
+
+                // If the URL is identical, force a reload
+                if (status === XmlListModel.Ready)
+                    reload()
+            }
         }
 
         property bool valid
