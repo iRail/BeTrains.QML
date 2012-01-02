@@ -35,6 +35,7 @@ Page {
         clip: true
         model: vehicleModel
         delegate: vehicleDelegate
+        header: vehicleHeader
     }
 
     Text {
@@ -55,12 +56,12 @@ Page {
     }
 
     Component {
-        id: liveboardHeader
+        id: vehicleHeader
 
         PullDownHeader {
-            view: viaView
+            view: vehicleView
             onPulled: {
-                viaModel.update(true)
+                vehicleModel.update(true)
             }
         }
     }

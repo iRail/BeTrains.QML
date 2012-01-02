@@ -8,7 +8,7 @@ Item {
     height: 0
 
     property bool __alreadyPulled: false
-    property int __dragThreshold: view.height / 5
+    property int __dragThreshold: view.height / 7.5
     signal pulled()
 
     visible: enabled
@@ -63,8 +63,9 @@ Item {
 
         Image {
             id: refreshIcon
-
-            source: privateStyle.imagePath("toolbar-refresh", window.platformInverted)
+            // FIXME: pass platformInverted, but it seems that this isn't accessible from everywhere
+            // (i.e. window variable isn't valid in case of a dynamically loaded component)
+            source: privateStyle.imagePath("toolbar-refresh", false)
 
             Behavior on rotation {
                 NumberAnimation {
@@ -75,7 +76,6 @@ Item {
 
         Text {
             id: refreshText
-
             color: platformStyle.colorNormalLight
 
         }

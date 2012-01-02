@@ -37,10 +37,8 @@ Page {
                 active = true
                 liveboardModel.station = ""
                 liveboardModel.update(false)
-                console.log("input")
             }
             onOutput: {
-                console.log("output")
                 active = false
                 liveboardModel.station = contents
                 liveboardModel.update(false)
