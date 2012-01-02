@@ -8,6 +8,7 @@ Item {
     height: 0
 
     property bool __alreadyPulled: false
+    property int __dragThreshold: view.height / 5
     signal pulled()
 
     visible: enabled
@@ -21,7 +22,7 @@ Item {
             __alreadyPulled = false;
         }
 
-        if (__alreadyPulled || -view.contentY > 100) {
+        if (__alreadyPulled || -view.contentY > __dragThreshold) {
             __alreadyPulled = true
             opacity = 1
             refreshIcon.rotation = 180

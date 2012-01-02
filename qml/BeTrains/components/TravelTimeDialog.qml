@@ -41,11 +41,11 @@ CommonDialog {
             id: typeGroup
             width: parent.width
             exclusive: true
-            checkedButton: typeDepartureButton
 
             ToolButton {
                 id: typeDepartureButton
                 text: "Depart"
+                onCheckedChanged: typeArrivalButton.checked = !checked
             }
             ToolButton {
                 id: typeArrivalButton

@@ -11,7 +11,7 @@ Page {
     property alias destination: connectionsModel.destination
     property alias datetime: connectionsModel.datetime
     property alias departure: connectionsModel.departure
-    property bool allowReload
+    property bool lockDatetime
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
@@ -20,7 +20,7 @@ Page {
             origin = ""
             destination = ""
             datetime = new Date()
-            allowReload = true
+            lockDatetime = true
             departure = true
         }
     }
@@ -73,9 +73,12 @@ Page {
         id: connectionsHeader
 
         PullDownHeader {
-            enabled: allowReload
             view: connectionsView
-            onPulled: connectionsModel.update(true)
+            onPulled: {
+                if (!lockDatetime)
+                    datetime = new Date()
+                connectionsModel.update(true)
+            }
         }
     }
 

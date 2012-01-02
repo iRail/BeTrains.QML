@@ -81,6 +81,9 @@ Page {
                     timeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
                     timeDialog.accepted.connect(__onDialogAccepted)
                 }
+                timeDialog.departure = __departure
+                timeDialog.datetime = __datetime
+                timeDialog.specified = __timeSpecified
                 timeDialog.open()
             }
         }
@@ -121,7 +124,7 @@ Page {
                                        destination: destinationField.searchText,
                                        datetime: __timeSpecified ? __datetime : new Date(),
                                        departure: __departure,
-                                       allowReload: !__timeSpecified
+                                       lockDatetime: __timeSpecified
                         });
                     }
                 }
@@ -138,6 +141,6 @@ Page {
     // Objects
     //
 
-    property variant connectionsPage: ConnectionsPage { }
+    property variant connectionsPage
     property variant timeDialog
 }

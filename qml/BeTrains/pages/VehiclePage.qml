@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../components"
 import "../js/utils.js" as Utils
 
 Page {
@@ -11,7 +12,7 @@ Page {
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
-            vehicleModel.update()
+            vehicleModel.update(false)
         } else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
             id = ""
             datetime = new Date()
@@ -53,6 +54,17 @@ Page {
         font.pixelSize: platformStyle.fontSizeLarge
     }
 
+    Component {
+        id: liveboardHeader
+
+        PullDownHeader {
+            view: viaView
+            onPulled: {
+                viaModel.update(true)
+            }
+        }
+    }
+
     BusyIndicator {
         anchors.centerIn: vehicleView
         visible: if (vehicleModel.status === XmlListModel.Loading) true; else false
@@ -72,10 +84,17 @@ Page {
         property string vehicle
         property date datetime
 
-        function update() {
-            vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
-            if (vehicle !== "")
+        function update(forceReload) {
+            // FIXME: working around API bug
+            vehicle = vehicle.replace('BE.NMBS.', '')
+
+            if (vehicle !== "") {
                 source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
+
+                // If the URL is identical, force a reload
+                if (forceReload && status === XmlListModel.Ready)
+                    reload()
+            }
         }
 
         property bool valid

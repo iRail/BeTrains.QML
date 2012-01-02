@@ -32,15 +32,17 @@ Page {
             delay: 750
             property bool active: false
 
-            input: liveboardSearch.searchText
-            onInputChanged: {
+            contents: liveboardSearch.searchText
+            onInput: {
                 active = true
                 liveboardModel.station = ""
                 liveboardModel.update(false)
+                console.log("input")
             }
-            onOutputChanged: {
+            onOutput: {
+                console.log("output")
                 active = false
-                liveboardModel.station = output
+                liveboardModel.station = contents
                 liveboardModel.update(false)
             }
         }
@@ -96,7 +98,10 @@ Page {
 
         PullDownHeader {
             view: liveboardView
-            onPulled: liveboardModel.update(true)
+            onPulled: {
+                datetime = new Date()
+                liveboardModel.update(true)
+            }
         }
     }
 
