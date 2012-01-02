@@ -85,7 +85,8 @@ CommonDialog {
                 DatePickerDialog {
                     id: dateDialog
                     titleText: "Select the date"
-                    rejectButtonText: "Cancel"
+                    // BUG: very strangely, reject() kills the entire application
+                    //rejectButtonText: "Cancel"
                     acceptButtonText: "Ok"
 
                     Component.onCompleted: {
@@ -112,7 +113,8 @@ CommonDialog {
                 TimePickerDialog {
                     id: timeDialog
                     titleText: "Select the time"
-                    rejectButtonText: "Cancel"
+                    // FIXME: removing rejection button to be consistent
+                    //rejectButtonText: "Cancel"
                     acceptButtonText: "Ok"
 
                     Component.onCompleted: {
