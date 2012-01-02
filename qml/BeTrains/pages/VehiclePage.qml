@@ -146,7 +146,7 @@ Page {
                     role: "SubTitle"
                     color: "red"
                     visible: if (delay > 0) true; else false
-                    text: Utils.readableDuration(delay)
+                    text: "+" + Utils.readableDuration(delay)
                 }
             }
         }
