@@ -117,26 +117,18 @@ Page {
                 }
 
                 onClicked: {
-                    if (!connectionsPage)
-                        connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
-
                     if (originField.searchText === "" || destinationField.searchText === "") {
                         banner.text = "Please fill out both station fields"
                         banner.open()
                     } else {
-                        historyModel.addConnection({"origin": originField.searchText,
-                                                    "destination": destinationField.searchText,
-                                                    "datetimeSpecified": __datetimeSpecified,
-                                                    "datetime": __datetime.getTime(),
-                                                    "departure": __departure,
-                                                    "favorite": false})
-                        pageStack.push(connectionsPage, {
-                                       origin: originField.searchText,
-                                       destination: destinationField.searchText,
-                                       datetime: __datetimeSpecified ? __datetime : new Date(),
-                                       departure: __departure,
-                                       lockDatetime: __datetimeSpecified
-                        });
+                        var connection = {"origin": originField.searchText,
+                            "destination": destinationField.searchText,
+                            "datetimeSpecified": __datetimeSpecified,
+                            "datetime": __datetimeSpecified ? __datetime : new Date(),
+                            "departure": __departure,
+                            "favorite": false}
+                        historyModel.addConnection(connection)
+                        loadConnection(connection)
                     }
                 }
             }
@@ -163,6 +155,7 @@ Page {
 
         function addConnection(connection) {
             append(connection)
+            // TODO: prepend
             console.log(Storage.addConnection(connection))
         }
     }
@@ -204,8 +197,7 @@ Page {
                 }
             }
 
-            onClicked: {
-            }
+            onClicked: loadConnection(historyModel.get(index))
         }
     }
 
@@ -216,4 +208,21 @@ Page {
 
     property variant connectionsPage
     property variant datetimeDialog
+
+
+    //
+    // Auxiliary
+    //
+
+    function loadConnection(connection) {
+        if (!connectionsPage)
+            connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
+
+        pageStack.push(connectionsPage, {
+                       origin: connection.origin,
+                       destination: connection.destination,
+                       datetime: connection.datetime,
+                       departure: connection.departure,
+                       lockDatetime: connection.datetimeSpecified});
+    }
 }

@@ -63,7 +63,7 @@ function getConnections(connections) {
                     connections.append({"origin": rs.rows.item(i).origin,
                                         "destination": rs.rows.item(i).destination,
                                         "datetimeSpecified": parseBoolean(rs.rows.item(i).datetimeSpecified),
-                                        "datetime": parseInt(rs.rows.item(i).datetime),
+                                        "datetime": new Date(parseInt(rs.rows.item(i).datetime)),
                                         "departure": (rs.rows.item(i).datetimeType === "departure"),
                                         "favorite": parseBoolean(rs.rows.item(i).favorite)})
                 }
@@ -82,7 +82,7 @@ function addConnection(connection) {
                 [connection.origin,
                  connection.destination,
                  connection.datetimeSpecified,
-                 connection.datetime,
+                 connection.datetime.getTime(),
                  (connection.departure ? "departure" : "arrival"),
                  connection.favorite])
             if (rs.rows.length > 0)
