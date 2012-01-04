@@ -13,10 +13,6 @@ Window {
 
     Component.onCompleted: {
         Storage.initialize()
-        if (Storage.getSetting("schemaIdentification") !== __schemaIdentification) {
-            Storage.reset()
-            Storage.setSetting("schemaIdentification", __schemaIdentification)
-        }
     }
 
     //
