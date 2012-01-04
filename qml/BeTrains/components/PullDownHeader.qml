@@ -2,42 +2,78 @@ import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 Item {
+    //
+    // External interface
+    //
+
     property ListView view
+
+    property int threshold: view.height / 7.5
+
+    // TODO: somehow detect mouse release, it is more intuitive
+
+    property string idleString: "Pull down to refresh..."
+    property string pullingString: "Hold to refresh..."
+    property string pulledString: "Refreshing!"
+
+    property alias delay: timer.interval
+
+    signal pulled()
+
+
+    //
+    // Initialization
+    //
+
+    property bool __pulled: false
+    property bool __pulling: false
 
     width: view.width
     height: 0
 
-    property bool __alreadyPulled: false
-    property int __dragThreshold: view.height / 7.5
-    signal pulled()
-
     visible: enabled
 
-    function __onContentYChanged() {
-        if (!enabled)
-            return
+    Component.onCompleted: {
+        view.contentYChanged.connect(function () {
+            if (!enabled)
+                return
 
-        if (__alreadyPulled && view.contentY === 0) {
-            pulled()
-            __alreadyPulled = false;
-        }
-
-        if (__alreadyPulled || -view.contentY > __dragThreshold) {
-            __alreadyPulled = true
-            opacity = 1
-            refreshIcon.rotation = 180
-            refreshText.text = "Refreshing!"
-        } else if (-view.contentY > 10) {
-            opacity = 0.5
-            refreshIcon.rotation = 0
-            refreshText.text = "Pull down to refresh..."
-        } else
-            opacity = 0
-
+            if (__pulled) {
+                if (view.contentY === 0) {
+                    pulled()
+                    __pulled = false;
+                }
+            } else if (-view.contentY > threshold) {
+                if (!__pulling) {
+                    __pulling = true
+                    timer.restart()
+                }
+                opacity = 1
+                refreshIcon.rotation = 180
+                refreshText.text = pullingString
+            } else if (-view.contentY > 10) {
+                __pulling = false
+                opacity = 0.5
+                refreshIcon.rotation = 0
+                refreshText.text = idleString
+            } else
+                opacity = 0
+        })
     }
 
-    Component.onCompleted: {
-        view.contentYChanged.connect(__onContentYChanged)
+    Timer {
+        id: timer
+
+        interval:  750
+        running: false
+        repeat: false
+
+        onTriggered: {
+            if (__pulling) {
+                __pulled = true
+                refreshText.text = pulledString
+            }
+        }
     }
 
     Behavior on opacity {
