@@ -3,13 +3,14 @@ import com.nokia.symbian 1.1
 import com.nokia.extras 1.1
 import "../components"
 import "../js/utils.js" as Utils
+import "../js/storage.js" as Storage
 
 Page {
     id: page
     anchors.fill: parent
 
     property date __datetime: new Date()
-    property bool __timeSpecified: false
+    property bool __datetimeSpecified: false
     property bool __departure: true
 
 
@@ -67,24 +68,24 @@ Page {
 
         SelectionListItem {
             title: (__departure ? "Departure" : "Arrival")
-            subTitle:  (__timeSpecified ? (__datetime.toLocaleString()) : "Right now")
+            subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : "Right now")
 
             function __onDialogAccepted() {
-                __departure = timeDialog.departure
-                __datetime = timeDialog.datetime
-                __timeSpecified = timeDialog.specified
+                __departure = datetimeDialog.departure
+                __datetime = datetimeDialog.datetime
+                __datetimeSpecified = datetimeDialog.specified
             }
 
             width: parent.width
             onClicked: {
-                if (!timeDialog) {
-                    timeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
-                    timeDialog.accepted.connect(__onDialogAccepted)
+                if (!datetimeDialog) {
+                    datetimeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
+                    datetimeDialog.accepted.connect(__onDialogAccepted)
                 }
-                timeDialog.departure = __departure
-                timeDialog.datetime = __datetime
-                timeDialog.specified = __timeSpecified
-                timeDialog.open()
+                datetimeDialog.departure = __departure
+                datetimeDialog.datetime = __datetime
+                datetimeDialog.specified = __datetimeSpecified
+                datetimeDialog.open()
             }
         }
     }
@@ -101,14 +102,7 @@ Page {
         }
 
         clip: true
-        model: ListModel {
-            ListElement {
-                contents: "Favourite..."
-            }
-            ListElement {
-                contents: "History..."
-            }
-        }
+        model: historyModel
         header: Component {
             ListItem {
                 id: item
@@ -130,33 +124,90 @@ Page {
                         banner.text = "Please fill out both station fields"
                         banner.open()
                     } else {
+                        historyModel.addConnection({"origin": originField.searchText,
+                                                    "destination": destinationField.searchText,
+                                                    "datetimeSpecified": __datetimeSpecified,
+                                                    "datetime": __datetime.getTime(),
+                                                    "departure": __departure,
+                                                    "favorite": false})
                         pageStack.push(connectionsPage, {
                                        origin: originField.searchText,
                                        destination: destinationField.searchText,
-                                       datetime: __timeSpecified ? __datetime : new Date(),
+                                       datetime: __datetimeSpecified ? __datetime : new Date(),
                                        departure: __departure,
-                                       lockDatetime: __timeSpecified
+                                       lockDatetime: __datetimeSpecified
                         });
                     }
                 }
             }
         }
 
-        delegate: Component {
-            ListItem {
-                id: item
-                ListItemText {
-                    anchors.fill: item.paddingItem
-                    text: contents
-                    color: platformStyle.colorDisabledLight
-                }
-            }
-        }
+        delegate: historyDelegate
     }
 
     InfoBanner {
          id: banner
-     }
+    }
+
+
+    //
+    // Data
+    //
+
+    ListModel {
+        id: historyModel
+
+        Component.onCompleted: {
+            Storage.getConnections(historyModel)
+        }
+
+        function addConnection(connection) {
+            append(connection)
+            console.log(Storage.addConnection(connection))
+        }
+    }
+
+    Component {
+        id: historyDelegate
+
+        ListItem {
+            id: item
+            subItemIndicator: true
+
+            Column {
+                anchors.fill: item.paddingItem
+                id: column1
+
+                ListItemText {
+                    id: connectionText
+                    mode: item.mode
+                    role: "Title"
+                    text: origin + " → " + destination
+                    font.capitalization: Font.Capitalize
+                }
+                ListItemText {
+                    id: datetimeText
+                    mode: item.mode
+                    role: "SubTitle"
+                    text: {
+                        var datetimeString
+                        if (departure)
+                            datetimeString = "Depart"
+                        else
+                            datetimeString = "Arrive"
+                        if (datetimeSpecified)
+                            datetimeString = datetimeString + " at " + (new Date(datetime)).toLocaleString()
+                        else
+                            datetimeString = datetimeString + " right now"
+                        return datetimeString
+                    }
+                }
+            }
+
+            onClicked: {
+            }
+        }
+    }
 
 
     //
@@ -164,5 +215,5 @@ Page {
     //
 
     property variant connectionsPage
-    property variant timeDialog
+    property variant datetimeDialog
 }

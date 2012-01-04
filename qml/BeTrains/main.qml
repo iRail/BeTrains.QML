@@ -1,11 +1,23 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 import "pages"
 import "components"
 import "js/utils.js" as Utils
+import "js/storage.js" as Storage
 
 Window {
     id: window
+
+    property string __schemaIdentification: "2"
+
+    Component.onCompleted: {
+        Storage.initialize()
+        if (Storage.getSetting("schemaIdentification") !== __schemaIdentification) {
+            Storage.reset()
+            Storage.setSetting("schemaIdentification", __schemaIdentification)
+        }
+    }
 
     //
     // Window structure

@@ -43,3 +43,7 @@ function loadObjectByPath(path, parent, properties) {
 
     return loadObjectByComponent(component, parent)
 }
+
+function parseBoolean(str) {
+    return /true/i.test(str);
+}
