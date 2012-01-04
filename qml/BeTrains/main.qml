@@ -56,8 +56,8 @@ Window {
 
         // Tab bar
         ButtonRow {
-            TabButton { tab: liveboardStack; text: "Liveboard" }
-            TabButton { tab: travelStack; text: "Travel" }
+            TabButton { tab: liveboardStack; iconSource: "toolbar-list" }
+            TabButton { tab: travelStack; iconSource: "toolbar-search" }
         }
 
         // Menu
