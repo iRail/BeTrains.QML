@@ -57,7 +57,7 @@ function getConnections(connections) {
     var res = "Unknown"
     __db.readTransaction(
         function(tx) {
-            var rs = tx.executeSql("SELECT * FROM connections;")
+            var rs = tx.executeSql("SELECT * FROM connections ORDER BY favorite, datetime DESC;")
             if (rs.rows.length > 0) {
                 for (var i = 0; i < rs.rows.length; i++) {
                     connections.append({"origin": rs.rows.item(i).origin,

@@ -167,34 +167,52 @@ Page {
             id: item
             subItemIndicator: true
 
-            Column {
+            Row {
                 anchors.fill: item.paddingItem
-                id: column1
+                spacing: platformStyle.paddingLarge
 
-                ListItemText {
-                    id: connectionText
-                    mode: item.mode
-                    role: "Title"
-                    text: origin + " → " + destination
-                    font.capitalization: Font.Capitalize
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    id: favoriteIcon
+                    // FIXME: ugly hack, opacity=0/visible=false makes the item disappear!
+                    opacity: if (favorite) 1; else 0.1
+                    // TODO: proper favorite icon
+                    source: privateStyle.imagePath("qtg_graf_rating_unrated", page.platformInverted)
                 }
-                ListItemText {
-                    id: datetimeText
-                    mode: item.mode
-                    role: "SubTitle"
-                    text: {
-                        var datetimeString
-                        if (departure)
-                            datetimeString = "Depart"
-                        else
-                            datetimeString = "Arrive"
-                        if (datetimeSpecified)
-                            datetimeString = datetimeString + " at " + (new Date(datetime)).toLocaleString()
-                        else
-                            datetimeString = datetimeString + " right now"
-                        return datetimeString
+
+                Column {
+                    id: column1
+
+                    ListItemText {
+                        id: connectionText
+                        mode: item.mode
+                        role: "Title"
+                        text: origin + " → " + destination
+                        font.capitalization: Font.Capitalize
+                    }
+                    ListItemText {
+                        id: datetimeText
+                        mode: item.mode
+                        role: "SubTitle"
+                        text: {
+                            var datetimeString
+                            if (departure)
+                                datetimeString = "Depart"
+                            else
+                                datetimeString = "Arrive"
+                            if (datetimeSpecified)
+                                datetimeString = datetimeString + " at " + (new Date(datetime)).toLocaleString()
+                            else
+                                datetimeString = datetimeString + " right now"
+                            return datetimeString
+                        }
                     }
                 }
+            }
+
+            onPressAndHold: {
+                // FIXME: read-only, update the model
+                favorite = !favorite
             }
 
             onClicked: loadConnection(historyModel.get(index))

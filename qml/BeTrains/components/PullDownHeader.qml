@@ -2,6 +2,8 @@ import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 Item {
+    id: root
+
     //
     // External interface
     //
@@ -99,9 +101,7 @@ Item {
 
         Image {
             id: refreshIcon
-            // FIXME: pass platformInverted, but it seems that this isn't accessible from everywhere
-            // (i.e. window variable isn't valid in case of a dynamically loaded component)
-            source: privateStyle.imagePath("toolbar-refresh", false)
+            source: privateStyle.imagePath("toolbar-refresh", root.platformInverted)
 
             Behavior on rotation {
                 NumberAnimation {
