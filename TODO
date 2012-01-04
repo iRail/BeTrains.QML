@@ -1,0 +1,4 @@
+Fix the listviews so that when a refresh is executed (rather than a _new_ request) the contents don't get erased, but the model only gets updated (in order to visualize new items being 
+added, etc).
+This would require refactoring of the busyIndicator, which is currenly using model.valid
+
