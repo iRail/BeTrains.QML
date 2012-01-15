@@ -15,7 +15,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     // Load a translation
     QTranslator tTranslator;
-    qDebug() << "BeTrains." + QLocale::system().name();
     if (tTranslator.load("BeTrains." + QLocale::system().name(), ":/i18n")) {
         tApplication->installTranslator(&tTranslator);
     }

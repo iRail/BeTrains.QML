@@ -154,9 +154,8 @@ Page {
         }
 
         function addConnection(connection) {
-            append(connection)
-            // TODO: prepend
-            console.log(Storage.addConnection(connection))
+            Storage.addConnection(connection)
+            Storage.getConnections(historyModel)
         }
     }
 
@@ -214,11 +213,18 @@ Page {
             }
 
             onPressAndHold: {
-                // FIXME: read-only, update the model
-                favorite = !favorite
+                var connection = historyModel.get(index)
+                connection.favorite = !connection.favorite
+                Storage.updateConnection(connection)
+                historyModel.set(index, connection)
             }
 
-            onClicked: loadConnection(historyModel.get(index))
+            onClicked: {
+                var connection = historyModel.get(index)
+                if (!connection.datetimeSpecified)
+                    connection.datetime = new Date()
+                loadConnection(connection)
+            }
         }
     }
 

@@ -1,30 +1,34 @@
 .pragma library
 Qt.include("utils.js")
 
-var __schemaVersion = 1
+var __schemaVersion = 6
 var __db
 
 function initialize() {
     __db = openDatabaseSync("betrains", "1.0", "userdata", 100000)
-
-    __db.transaction(
-        function(tx) {
-            tx.executeSql("CREATE TABLE IF NOT EXISTS settings(setting TEXT UNIQUE, value TEXT)")
-            tx.executeSql("CREATE TABLE IF NOT EXISTS connections(origin TEXT, destination TEXT, datetimeSpecified TEXT, datetime TEXT, datetimeType TEXT, favorite TEXT)")
-        }
-    )
+    createTables()
 
     if (getSetting("__schemaVersion") !== __schemaVersion.toString()) {
         reset()
+        createTables()
         setSetting("__schemaVersion", __schemaVersion.toString())
     }
+}
+
+function createTables() {
+    __db.transaction(
+        function(tx) {
+            tx.executeSql("CREATE TABLE IF NOT EXISTS settings(setting TEXT UNIQUE, value TEXT)")
+            tx.executeSql("CREATE TABLE IF NOT EXISTS connections(id INTEGER PRIMARY KEY ASC, origin TEXT, destination TEXT, datetimeSpecified TEXT, datetime TEXT, datetimeType TEXT, favorite TEXT)")
+        }
+    )
 }
 
 function reset() {
     __db.transaction(
         function(tx) {
-            tx.executeSql("DELETE FROM settings;")
-            tx.executeSql("DELETE FROM connections;")
+            tx.executeSql("DROP TABLE settings;")
+            tx.executeSql("DROP TABLE connections;")
         }
     )
 }
@@ -55,12 +59,14 @@ function getSetting(setting) {
 
 function getConnections(connections) {
     var res = "Unknown"
+    connections.clear()
     __db.readTransaction(
         function(tx) {
-            var rs = tx.executeSql("SELECT * FROM connections ORDER BY favorite, datetime DESC;")
+            var rs = tx.executeSql("SELECT * FROM connections ORDER BY favorite DESC, datetime DESC;")
             if (rs.rows.length > 0) {
                 for (var i = 0; i < rs.rows.length; i++) {
-                    connections.append({"origin": rs.rows.item(i).origin,
+                    connections.append({"id": rs.rows.item(i).id,
+                                        "origin": rs.rows.item(i).origin,
                                         "destination": rs.rows.item(i).destination,
                                         "datetimeSpecified": parseBoolean(rs.rows.item(i).datetimeSpecified),
                                         "datetime": new Date(parseInt(rs.rows.item(i).datetime)),
@@ -78,14 +84,38 @@ function addConnection(connection) {
     var res = "Unknown"
     __db.transaction(
         function(tx) {
-            var rs = tx.executeSql("INSERT INTO connections VALUES (?,?,?,?,?,?);",
+            var rs = tx.executeSql("INSERT INTO connections(origin, destination, datetimeSpecified, datetime, datetimeType, favorite) VALUES (?,?,?,?,?,?);",
                 [connection.origin,
                  connection.destination,
                  connection.datetimeSpecified,
                  connection.datetime.getTime(),
                  (connection.departure ? "departure" : "arrival"),
                  connection.favorite])
-            if (rs.rows.length > 0)
+            if (rs.rowsAffected) {
+                rs = tx.executeSql("SELECT max(id) AS id FROM connections")
+                if (rs.rows.length > 0) {
+                    connection.id = rs.rows.item(0).id
+                    res = "OK"
+                }
+            }
+        }
+    )
+    return res
+}
+
+function updateConnection(connection) {
+    var res = "Unknown"
+    __db.transaction(
+        function(tx) {
+            var rs = tx.executeSql("UPDATE connections SET origin=?, destination=?, datetimeSpecified=?, datetime=?, datetimeType=?, favorite=? WHERE id=?;",
+               [connection.origin,
+                connection.destination,
+                connection.datetimeSpecified,
+                connection.datetime.getTime(),
+                (connection.departure ? "departure" : "arrival"),
+                connection.favorite,
+                connection.id])
+            if (rs.rowsAffected > 0)
                 res = "OK"
         }
     )
