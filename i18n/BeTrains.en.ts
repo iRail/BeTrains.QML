@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="en">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -10,16 +10,27 @@
 </context>
 <context>
     <name>ConnectionsPage</name>
+    <message numerus="yes">
+        <source>Via %n other(s)</source>
+        <translation type="unfinished">
+            <numerusform>Via %n other</numerusform>
+            <numerusform>Via %n others</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>From: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To: </source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Error!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Via %1 others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -80,6 +91,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Departure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arrival</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Right now</source>
         <translation type="unfinished"></translation>
     </message>
@@ -120,6 +139,10 @@
     </message>
     <message>
         <source>Specify time?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

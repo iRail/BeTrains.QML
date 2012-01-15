@@ -38,12 +38,13 @@ We are using http://transifex.net as a frontend for translating the client, use 
 
 ### Pushing new source strings
 
-1. `lupdate -pro BeTrains.pro`
-2. `tx push -s`
+1. `lupdate -no-obsolete -pro BeTrains.pro -ts i18n/BeTrains.en.ts`
+2. Fill in plural forms (use Qt Linquist, or manually edit `numerus="yes"` entries)
+3. `tx push -s`
 
 
 ### Fetching new translations
 
 1. `tx pull -a`
-2. update `BeTrains.qrc`
+2. Update `BeTrains.qrc`
 3. `git add` new translations from `i18n/`
