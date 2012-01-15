@@ -40,14 +40,14 @@ Page {
 
                 StackableSearchBox {
                     id: originField
-                    placeHolderText: "Origin..."
+                    placeHolderText: qsTr("Origin...")
                     width: parent.width
                     KeyNavigation.tab: destinationField
                 }
 
                 StackableSearchBox {
                     id: destinationField
-                    placeHolderText: "Destination..."
+                    placeHolderText: qsTr("Destination...")
                     width: parent.width
                 }
             }
@@ -68,7 +68,7 @@ Page {
 
         SelectionListItem {
             title: (__departure ? "Departure" : "Arrival")
-            subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : "Right now")
+            subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : qsTr("Right now"))
 
             function __onDialogAccepted() {
                 __departure = datetimeDialog.departure
@@ -113,12 +113,12 @@ Page {
 
                 ListItemText {
                     anchors.fill: item.paddingItem
-                    text: "New query"
+                    text: qsTr("New query")
                 }
 
                 onClicked: {
                     if (originField.searchText === "" || destinationField.searchText === "") {
-                        banner.text = "Please fill out both station fields"
+                        banner.text = qsTr("Please fill out both station fields")
                         banner.open()
                     } else {
                         var connection = {"origin": originField.searchText,
@@ -196,14 +196,17 @@ Page {
                         role: "SubTitle"
                         text: {
                             var datetimeString
-                            if (departure)
-                                datetimeString = "Depart"
-                            else
-                                datetimeString = "Arrive"
-                            if (datetimeSpecified)
-                                datetimeString = datetimeString + " at " + (new Date(datetime)).toLocaleString()
-                            else
-                                datetimeString = datetimeString + " right now"
+                            if (departure) {
+                                if (datetimeSpecified)
+                                    datetimeString = qsTr("Depart at %1").arg((new Date(datetime)).toLocaleString())
+                                else
+                                    datetimeString = qsTr("Depart right now")
+                            } else {
+                                if (datetimeSpecified)
+                                    datetimeString = qsTr("Arrive at %1").arg((new Date(datetime)).toLocaleString())
+                                else
+                                    datetimeString = qsTr("Arrive right now")
+                            }
                             return datetimeString
                         }
                     }

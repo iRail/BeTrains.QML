@@ -44,12 +44,12 @@ CommonDialog {
 
             ToolButton {
                 id: typeDepartureButton
-                text: "Depart"
+                text: qsTr("Depart")
                 onCheckedChanged: typeArrivalButton.checked = !checked
             }
             ToolButton {
                 id: typeArrivalButton
-                text: "Arrive";
+                text: qsTr("Arrive");
             }
         }
 
@@ -66,7 +66,7 @@ CommonDialog {
                 width: parent.width - parent.spacing - timeSpecifiedSwitch.width
                 height: timeSpecifiedSwitch.height
                 verticalAlignment: Text.AlignVCenter
-                text: "Specify time?"
+                text: qsTr("Specify time?")
                 font.pixelSize: platformStyle.fontSizeMedium
                 color: platformStyle.colorNormalLight
             }

@@ -37,9 +37,9 @@ Page {
         text: {
             switch (viaModel.status) {
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
-                return "No results"
+                return qsTr("No results")
             default:
                 return ""
             }
@@ -96,13 +96,13 @@ Page {
                     id: stationText
                     mode: item.mode
                     role: "Title"
-                    text: "Transfer at " + station
+                    text: qsTr("Transfer at %1").arg(station)
                 }
                 ListItemText {
                     id: directionText
                     mode: item.mode
                     role: "SubTitle"
-                    text: "Towards " + direction
+                    text: qsTr("Towards %1").arg(direction)
                 }
             }
             Column {
@@ -118,13 +118,13 @@ Page {
                     id: arrText
                     mode: item.mode
                     role: "Title"
-                    text: "Platform " + arrival_platform + ", " + Utils.readableTime(Utils.getDateTime(arrival))
+                    text: qsTr("Platform %1, %2").arg(arrival_platform, Utils.readableTime(Utils.getDateTime(arrival)))
                 }
                 ListItemText {
                     id: depText
                     mode: item.mode
                     role: "Title"
-                    text: "Platform " + departure_platform + ", " + Utils.readableTime(Utils.getDateTime(departure))
+                    text: qsTr("Platform %1, %2").arg(departure_platform, Utils.readableTime(Utils.getDateTime(departure)))
                 }
             }
         }

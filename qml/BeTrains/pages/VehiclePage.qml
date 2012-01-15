@@ -43,9 +43,9 @@ Page {
         text: {
             switch (vehicleModel.status) {
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
-                return "No results"
+                return qsTr("No results")
             default:
                 return ""
             }

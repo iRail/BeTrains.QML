@@ -14,9 +14,9 @@ Item {
 
     // TODO: somehow detect mouse release, it is more intuitive
 
-    property string idleString: "Pull down to refresh..."
-    property string pullingString: "Hold to refresh..."
-    property string pulledString: "Refreshing!"
+    property string idleString: qsTr("Pull down to refresh...")
+    property string pullingString: qsTr("Hold to refresh...")
+    property string pulledString: qsTr("Refreshing!")
 
     property alias delay: timer.interval
 

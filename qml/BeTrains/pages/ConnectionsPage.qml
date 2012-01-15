@@ -105,13 +105,13 @@ Page {
             if (connectionsModel.loading)
                 return ""
             else if (connectionsModel.error)
-                return "Error!"
+                return qsTr("Error!")
 
             switch (connectionsModel.status) {
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
-                return "No results"
+                return qsTr("No results")
             default:
                 return ""
             }
@@ -227,13 +227,13 @@ Page {
                     id: viaText
                     mode: item.mode
                     role: "Title"
-                    text: (vias > 0 ? ("Via " + vias + " others") : "Direct connection")
+                    text: (vias > 0 ? qsTr("Via %1 others").arg(vias) : qsTr("Direct connection"))
                 }
                 ListItemText {
                     id: durationText
                     mode: item.mode
                     role: "SubTitle"
-                    text: Utils.readableDuration(duration) + " en route"
+                    text: qsTr("%1 en route").arg(Utils.readableDuration(duration))
                 }
             }
             Column {

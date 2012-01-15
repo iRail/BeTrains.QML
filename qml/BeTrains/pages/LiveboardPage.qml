@@ -24,7 +24,7 @@ Page {
             left: parent.left
             right: parent.right
         }
-        placeHolderText: "Station..."
+        placeHolderText: qsTr("Station...")
 
         property alias entering: inactivityTracker.active
         DelayedPropagator {
@@ -43,14 +43,6 @@ Page {
                 liveboardModel.station = contents
                 liveboardModel.update(false)
             }
-        }
-    }
-
-    Timer {
-        id: liveboardRefreshTimer
-        interval: 50; running: false; repeat: false
-        onTriggered: {
-            console.log("Refresh")
         }
     }
 
@@ -75,13 +67,13 @@ Page {
         text: {
             switch (liveboardModel.status) {
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
                 if (liveboardModel.valid)
-                    return "No results"
+                    return qsTr("No results")
                 // Deliberate fall-through
             case XmlListModel.Null:
-                return "Enter a station"
+                return qsTr("Enter a station")
             default:
                 return ""
             }
@@ -165,7 +157,7 @@ Page {
                     mode: item.mode
                     role: "SubTitle"
                     visible: if (platform !== "") true; else false
-                    text: "Platform " + platform
+                    text: qsTr("Platform %1").arg(platform)
                 }
             }
             Column {
