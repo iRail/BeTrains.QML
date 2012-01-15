@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/i18n">
-        <file>i18n/en.ts</file>
-        <file>i18n/nl.ts</file>
+        <file alias="BeTrains.en.qm">i18n/BeTrains.en.qm</file>
+        <file alias="BeTrains.nl.qm">i18n/BeTrains.nl.qm</file>
     </qresource>
 </RCC>

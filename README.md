@@ -14,24 +14,24 @@ The main project file takes care of generating `.qm` files from the source `.ts`
 
 This resource file must be updated whenever a new translation is added. Please note that files must end with `.qm`, not `.ts`.
 
-    <qresource prefix="/translations">
-        <file alias="en">locale/bitcoin_en.qm</file>
-        ...
+    <qresource prefix="/i18n">
+        <file alias="BeTrains.en.qm">i18n/BeTrains.en.qm</file>
+        <file alias="BeTrains.nl.qm">i18n/BeTrains.nl.qm</file>
     </qresource>
 
 ### i18n/
 
 This directory contains all translations. Filenames must adhere to this format:
 
-    xx_YY.ts or xx.ts
+    BeTrains.xx_YY.ts or BeTrains.xx.ts
 
 #### Source file
 
-`i18n/en.ts` is a treated in a special way. It is used as the source for all other translations. Whenever a string in the code is change this file must be updated to reflect those changes. Usually, this can be accomplished by running `lupdate`
+`i18n/BeTrains.en.ts` is a treated in a special way. It is used as the source for all other translations. Whenever a string in the code is change this file must be updated to reflect those changes. Usually, this can be accomplished by running `lupdate`, after which the file can get pushed to Transifex (see below).
 
 
 
-Syncing with transifex
+Syncing with Transifex
 ----------------------
 
 We are using http://transifex.net as a frontend for translating the client, use the "transifex client":http://help.transifex.net/features/client/index.html to fetch new translations from transifex.

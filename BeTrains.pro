@@ -44,7 +44,7 @@ HEADERS += \
     customnetworkaccessmanager.h
 
 # Translations
-TRANSLATIONS = $$files(i18n/*.ts)
+TRANSLATIONS = $$files(i18n/BeTrains*.ts)
 isEmpty(QMAKE_LRELEASE) {
     win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
     else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
@@ -60,18 +60,19 @@ PRE_TARGETDEPS += compiler_TSQM_make_all
 
 evilhack {
     SOURCES += \
-    qml/BeTrains/main.qml \
-    qml/BeTrains/pages/VehiclePage.qml \
-    qml/BeTrains/pages/TravelPage.qml \
-    qml/BeTrains/pages/ConnectionsPage.qml \
-    qml/BeTrains/pages/ViaPage.qml \
-    qml/BeTrains/pages/LiveboardPage.qml \
-    qml/BeTrains/components/AboutDialog.qml \
-    qml/BeTrains/components/TravelTimeDialog.qml \
-    qml/BeTrains/components/PullDownHeader.qml \
-    qml/BeTrains/components/StackableSearchBox.qml \
-    qml/BeTrains/components/DelayedPropagator.qml
+        qml/BeTrains/main.qml \
+        qml/BeTrains/pages/VehiclePage.qml \
+        qml/BeTrains/pages/TravelPage.qml \
+        qml/BeTrains/pages/ConnectionsPage.qml \
+        qml/BeTrains/pages/ViaPage.qml \
+        qml/BeTrains/pages/LiveboardPage.qml \
+        qml/BeTrains/components/AboutDialog.qml \
+        qml/BeTrains/components/TravelTimeDialog.qml \
+        qml/BeTrains/components/PullDownHeader.qml \
+        qml/BeTrains/components/StackableSearchBox.qml \
+        qml/BeTrains/components/DelayedPropagator.qml
 }
 
+# Resourcess
 RESOURCES += \
     BeTrains.qrc

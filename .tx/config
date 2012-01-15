@@ -2,7 +2,7 @@
 host = https://www.transifex.net
 
 [BeTrains.qml]
-file_filter = i18n/<lang>.ts
-source_file = i18n/en.ts
+file_filter = i18n/BeTrains.<lang>.ts
+source_file = i18n/BeTrains.en.ts
 source_lang = en
 
