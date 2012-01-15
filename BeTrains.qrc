@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/i18n">
         <file>i18n/en.ts</file>
+        <file>i18n/nl.ts</file>
     </qresource>
 </RCC>
