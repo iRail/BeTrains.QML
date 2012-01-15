@@ -101,7 +101,7 @@ Window {
             content: MenuLayout {
                 // About
                 MenuItem {
-                    text: "About"
+                    text: qsTr("About")
                     onClicked: {
                         if (!aboutDialog)
                             aboutDialog = Utils.loadObjectByPath("components/AboutDialog.qml", menu)
@@ -111,7 +111,7 @@ Window {
 
                 // Quit
                 MenuItem {
-                    text: "Quit"
+                    text: qsTr("Quit")
                     onClicked: Qt.quit()
                 }
             }

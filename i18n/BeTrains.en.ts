@@ -180,4 +180,15 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>main</name>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
