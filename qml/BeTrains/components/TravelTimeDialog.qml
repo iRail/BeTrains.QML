@@ -86,8 +86,8 @@ CommonDialog {
                     id: dateDialog
                     titleText: "Select the date"
                     // BUG: very strangely, reject() kills the entire application
-                    //rejectButtonText: "Cancel"
-                    acceptButtonText: "Ok"
+                    //rejectButtonText: qsTr("Cancel")
+                    acceptButtonText: qsTr("Ok")
 
                     Component.onCompleted: {
                         year = datetime.getFullYear()
@@ -114,8 +114,8 @@ CommonDialog {
                     id: timeDialog
                     titleText: "Select the time"
                     // FIXME: removing rejection button to be consistent
-                    //rejectButtonText: "Cancel"
-                    acceptButtonText: "Ok"
+                    //rejectButtonText: qsTr("Cancel")
+                    acceptButtonText: qsTr("Ok")
 
                     Component.onCompleted: {
                         hour = datetime.getHours()

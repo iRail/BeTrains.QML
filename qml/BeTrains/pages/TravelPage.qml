@@ -67,7 +67,7 @@ Page {
         }
 
         SelectionListItem {
-            title: (__departure ? "Departure" : "Arrival")
+            title: (__departure ? qsTr("Departure") : qsTr("Arrival"))
             subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : qsTr("Right now"))
 
             function __onDialogAccepted() {

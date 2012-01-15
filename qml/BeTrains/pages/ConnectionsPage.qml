@@ -42,7 +42,7 @@ Page {
         Row {
             width: parent.width
             Text {
-                text: "From: "
+                text: qsTr("From: ")
                 color: platformStyle.colorDisabledLight
                 font.pixelSize: platformStyle.fontSizeLarge
             }
@@ -62,7 +62,7 @@ Page {
         Row {
             width: parent.width
             Text {
-                text: "To: "
+                text: qsTr("To: ")
                 color: platformStyle.colorDisabledLight
                 font.pixelSize: platformStyle.fontSizeLarge
             }
@@ -227,7 +227,7 @@ Page {
                     id: viaText
                     mode: item.mode
                     role: "Title"
-                    text: (vias > 0 ? qsTr("Via %1 others").arg(vias) : qsTr("Direct connection"))
+                    text: (vias > 0 ? qsTr("Via %n other(s)", "", vias) : qsTr("Direct connection"))
                 }
                 ListItemText {
                     id: durationText
