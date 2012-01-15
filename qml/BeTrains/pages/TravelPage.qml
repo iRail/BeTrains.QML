@@ -173,10 +173,21 @@ Page {
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
                     id: favoriteIcon
-                    // FIXME: ugly hack, opacity=0/visible=false makes the item disappear!
-                    opacity: if (favorite) 1; else 0.1
-                    // TODO: proper favorite icon
-                    source: privateStyle.imagePath("qtg_graf_rating_unrated", page.platformInverted)
+                    source: privateStyle.imagePath("qtg_graf_rating_rated", page.platformInverted)
+
+                    states: [
+                        State { name: "Favorite"; when: favorite
+                            PropertyChanges {target: favoriteIcon; opacity: 1}
+                        },
+                        State { name: "History"; when: !favorite
+                            PropertyChanges {target: favoriteIcon; opacity: 0.1}
+                        }
+                    ]
+                    transitions: [
+                        Transition { from: "Favorite"; to: "History"; reversible: true
+                            NumberAnimation { properties: "opacity"; duration: 250 }
+                        }
+                    ]
                 }
 
                 Column {
