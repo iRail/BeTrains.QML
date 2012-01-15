@@ -43,4 +43,19 @@ HEADERS += \
     networkaccessmanagerfactory.h \
     customnetworkaccessmanager.h
 
-
+# Translations
+TRANSLATIONS += ts/nl_BE.ts
+evilhack {
+    SOURCES += \
+    qml/BeTrains/main.qml \
+    qml/BeTrains/pages/VehiclePage.qml \
+    qml/BeTrains/pages/TravelPage.qml \
+    qml/BeTrains/pages/ConnectionsPage.qml \
+    qml/BeTrains/pages/ViaPage.qml \
+    qml/BeTrains/pages/LiveboardPage.qml \
+    qml/BeTrains/components/AboutDialog.qml \
+    qml/BeTrains/components/TravelTimeDialog.qml \
+    qml/BeTrains/components/PullDownHeader.qml \
+    qml/BeTrains/components/StackableSearchBox.qml \
+    qml/BeTrains/components/DelayedPropagator.qml
+}
