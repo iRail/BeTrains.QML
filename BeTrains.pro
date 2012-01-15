@@ -72,3 +72,6 @@ evilhack {
     qml/BeTrains/components/StackableSearchBox.qml \
     qml/BeTrains/components/DelayedPropagator.qml
 }
+
+RESOURCES += \
+    BeTrains.qrc
