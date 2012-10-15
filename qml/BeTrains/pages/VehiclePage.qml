@@ -1,38 +1,21 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../components"
 import "../js/utils.js" as Utils
 
 Page {
     id: page
     anchors.fill: parent
+
     property alias id: vehicleModel.vehicle
+    property alias datetime: vehicleModel.datetime
 
     onStatusChanged: {
-        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            vehicleModel.source = ""
-        }
-    }
-
-
-    //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.pop()
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
-                window.menu.open()
-            }
+        if (status === PageStatus.Activating) {
+            vehicleModel.update(false)
+        } else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
+            id = ""
+            datetime = new Date()
         }
     }
 
@@ -43,32 +26,51 @@ Page {
 
     ListView {
         id: vehicleView
-
         anchors {
             fill: parent
             margins: platformStyle.paddingMedium
         }
-
+        visible: vehicleModel.valid
         clip: true
         model: vehicleModel
         delegate: vehicleDelegate
+        header: vehicleHeader
     }
 
     Text {
         anchors.centerIn: vehicleView
-        visible: if (vehicleModel.count > 0) false; else true;
+        visible: if (!vehicleModel.valid || vehicleModel.count <= 0) true; else false;
         text: {
             switch (vehicleModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
-                return "No results"
+                return qsTr("No results")
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    Component {
+        id: vehicleHeader
+
+        PullDownHeader {
+            view: vehicleView
+            onPulled: {
+                vehicleModel.update(true)
+            }
+        }
+    }
+
+    BusyIndicator {
+        anchors.centerIn: vehicleView
+        visible: if (vehicleModel.status === XmlListModel.Loading) true; else false
+        running: true
+        height: vehicleView.height / 10
+        width: height
     }
 
 
@@ -80,14 +82,23 @@ Page {
         id: vehicleModel
 
         property string vehicle
-        property date datetime: new Date()
+        property date datetime
 
-        onVehicleChanged: {
-            source = ""
-            vehicle = vehicle.replace('BE.NMBS.', '') // FIXME: working around API bug
-            if (vehicle !== "")
+        function update(forceReload) {
+            // FIXME: working around API bug
+            vehicle = vehicle.replace('BE.NMBS.', '')
+
+            if (vehicle !== "") {
                 source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
+
+                // If the URL is identical, force a reload
+                if (forceReload && status === XmlListModel.Ready)
+                    reload()
+            }
         }
+
+        property bool valid
+        valid: if (vehicle !== "" && status === XmlListModel.Ready) true; else false;
 
         source: ""
         query: "/vehicle/Vehicle/stops"
@@ -103,6 +114,9 @@ Page {
         ListItem {
             id: item
             Column {
+                anchors.fill: item.paddingItem
+                id: column1
+
                 ListItemText {
                     id: stationText
                     mode: item.mode
@@ -111,18 +125,28 @@ Page {
                 }
             }
             Column {
-                anchors.right: parent.right
+                id: column2
+                anchors {
+                    top: column1.top
+                    right: parent.right
+                    rightMargin: platformStyle.paddingMedium
+                }
+                width: Math.max(timeText.width, delayText.width)
                 ListItemText {
                     id: timeText
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "Title"
                     text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
+                    color: "red"
+                    visible: if (delay > 0) true; else false
+                    text: "+" + Utils.readableDuration(delay)
                 }
             }
         }

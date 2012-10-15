@@ -3,50 +3,15 @@ import com.nokia.symbian 1.1
 import com.nokia.extras 1.1
 import "../components"
 import "../js/utils.js" as Utils
+import "../js/storage.js" as Storage
 
 Page {
     id: page
     anchors.fill: parent
 
-    property date datetime: new Date()
-
-
-    //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
-        }
-
-        // Make request
-        ToolButton {
-            iconSource: "toolbar-search"
-            enabled: originField.text !== "" && destinationField.text !== ""
-            onClicked: {
-                connectionsPage = Utils.getDynamicObject(connectionsPage, connectionsComponent, page)
-                pageStack.push(connectionsPage, {
-                               origin: originField.text,
-                               destination: destinationField.text,
-                               datetime: typeNowButton.checked ? new Date() : datetime,
-                               arrival: typeArrivalButton.checked
-                });
-            }
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
-                window.menu.open()
-            }
-        }
-    }
+    property date __datetime: new Date()
+    property bool __datetimeSpecified: false
+    property bool __departure: true
 
 
     //
@@ -54,12 +19,13 @@ Page {
     //
 
     Column {
-        id: contents
+        id: configuration
         spacing: platformStyle.paddingMedium
 
-        width: parent.width
         anchors {
-            fill: parent
+            left: parent.left
+            right: parent.right
+            top: parent.top
             margins: platformStyle.paddingMedium
         }
 
@@ -69,19 +35,19 @@ Page {
 
             Column {
                 id: stationColumn
-                width: parent.width - swapButton.width - platformStyle.paddingMedium
+                width: parent.width - swapButton.width - parent.spacing
                 spacing: platformStyle.paddingSmall
 
-                StationField {
+                StackableSearchBox {
                     id: originField
-                    placeholderText: "Origin..."
+                    placeHolderText: qsTr("Origin...")
                     width: parent.width
                     KeyNavigation.tab: destinationField
                 }
 
-                StationField {
+                StackableSearchBox {
                     id: destinationField
-                    placeholderText: "Destination..."
+                    placeHolderText: qsTr("Destination...")
                     width: parent.width
                 }
             }
@@ -92,103 +58,209 @@ Page {
                 iconSource: "../icons/swap.png"
 
                 onClicked: {
-                    var temp = destinationField.text
-                    destinationField.text = originField.text
-                    originField.text = temp
+                    var temp = destinationField.searchText
+                    destinationField.searchText = originField.searchText
+                    originField.searchText = temp
                     swapButton.focus = true
                 }
             }
         }
 
-        ButtonRow {
-            id: typeGroup
-            width: parent.width
-            exclusive: true
-            checkedButton: typeNowButton
+        SelectionListItem {
+            title: (__departure ? qsTr("Departure") : qsTr("Arrival"))
+            subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : qsTr("Right now"))
 
-            ToolButton {
-                id: typeDepartureButton
-                text: "Depart"
+            function __onDialogAccepted() {
+                __departure = datetimeDialog.departure
+                __datetime = datetimeDialog.datetime
+                __datetimeSpecified = datetimeDialog.specified
             }
-            ToolButton {
-                id: typeNowButton
-                text: "Now"
+
+            width: parent.width
+            onClicked: {
+                if (!datetimeDialog) {
+                    datetimeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
+                    datetimeDialog.accepted.connect(__onDialogAccepted)
+                }
+                datetimeDialog.departure = __departure
+                datetimeDialog.datetime = __datetime
+                datetimeDialog.specified = __datetimeSpecified
+                datetimeDialog.open()
             }
-            ToolButton {
-                id: typeArrivalButton
-                text: "Arrive";
+        }
+    }
+
+    ListView {
+        id: historyView
+
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: configuration.bottom
+            bottom: parent.bottom
+            topMargin: platformStyle.paddingLarge
+        }
+
+        clip: true
+        model: historyModel
+        header: Component {
+            ListItem {
+                id: item
+                subItemIndicator: true
+
+                // FIXME: silence some errors
+                property int index: 0
+
+                ListItemText {
+                    anchors.fill: item.paddingItem
+                    text: qsTr("New query")
+                }
+
+                onClicked: {
+                    if (originField.searchText === "" || destinationField.searchText === "") {
+                        banner.text = qsTr("Please fill out both station fields")
+                        banner.open()
+                    } else {
+                        var connection = {"origin": originField.searchText,
+                            "destination": destinationField.searchText,
+                            "datetimeSpecified": __datetimeSpecified,
+                            "datetime": __datetimeSpecified ? __datetime : new Date(),
+                            "departure": __departure,
+                            "favorite": false}
+                        historyModel.addConnection(connection)
+                        loadConnection(connection)
+                    }
+                }
             }
         }
 
-        Row {
-            width: parent.width
-            spacing: platformStyle.paddingMedium
+        delegate: historyDelegate
+    }
 
-            Button {
-                id: dateField
-                text: datetime.toLocaleDateString()
-                enabled: !typeNowButton.checked
-                width: (parent.width - platformStyle.paddingMedium) / 2
+    InfoBanner {
+         id: banner
+    }
 
-                DatePickerDialog {
-                    id: dateDialog
-                    titleText: "Select the date"
-                    rejectButtonText: "Cancel"
-                    acceptButtonText: "Ok"
 
-                    Component.onCompleted: {
-                        year = datetime.getFullYear()
-                        month = datetime.getMonth()
-                        day = datetime.getDate()
-                    }
+    //
+    // Data
+    //
 
-                    onAccepted: datetime = new Date(year, month, day, datetime.getHours(), datetime.getMinutes(), datetime.getSeconds(), datetime.getMilliseconds())
+    ListModel {
+        id: historyModel
+
+        Component.onCompleted: {
+            Storage.getConnections(historyModel)
+        }
+
+        function addConnection(connection) {
+            Storage.addConnection(connection)
+            Storage.getConnections(historyModel)
+        }
+    }
+
+    Component {
+        id: historyDelegate
+
+        ListItem {
+            id: item
+            subItemIndicator: true
+
+            Row {
+                anchors.fill: item.paddingItem
+                spacing: platformStyle.paddingLarge
+
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    id: favoriteIcon
+                    source: privateStyle.imagePath("qtg_graf_rating_rated", page.platformInverted)
+
+                    states: [
+                        State { name: "Favorite"; when: favorite
+                            PropertyChanges {target: favoriteIcon; opacity: 1}
+                        },
+                        State { name: "History"; when: !favorite
+                            PropertyChanges {target: favoriteIcon; opacity: 0.1}
+                        }
+                    ]
+                    transitions: [
+                        Transition { from: "Favorite"; to: "History"; reversible: true
+                            NumberAnimation { properties: "opacity"; duration: 250 }
+                        }
+                    ]
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: dateDialog.open()
+                Column {
+                    id: column1
+
+                    ListItemText {
+                        id: connectionText
+                        mode: item.mode
+                        role: "Title"
+                        text: origin + " → " + destination
+                        font.capitalization: Font.Capitalize
+                    }
+                    ListItemText {
+                        id: datetimeText
+                        mode: item.mode
+                        role: "SubTitle"
+                        text: {
+                            var datetimeString
+                            if (departure) {
+                                if (datetimeSpecified)
+                                    datetimeString = qsTr("Depart at %1").arg((new Date(datetime)).toLocaleString())
+                                else
+                                    datetimeString = qsTr("Depart right now")
+                            } else {
+                                if (datetimeSpecified)
+                                    datetimeString = qsTr("Arrive at %1").arg((new Date(datetime)).toLocaleString())
+                                else
+                                    datetimeString = qsTr("Arrive right now")
+                            }
+                            return datetimeString
+                        }
+                    }
                 }
             }
 
-            Button {
-                id: timeField
-                text: Utils.readableTime(datetime)
-                enabled: !typeNowButton.checked
-                width: (parent.width - platformStyle.paddingMedium) / 2
+            onPressAndHold: {
+                var connection = historyModel.get(index)
+                connection.favorite = !connection.favorite
+                Storage.updateConnection(connection)
+                historyModel.set(index, connection)
+            }
 
-                TimePickerDialog {
-                    id: timeDialog
-                    titleText: "Select the time"
-                    rejectButtonText: "Cancel"
-                    acceptButtonText: "Ok"
-
-                    Component.onCompleted: {
-                        hour = datetime.getHours()
-                        minute = datetime.getMinutes()
-                        second = datetime.getSeconds()
-                    }
-
-                    onAccepted: datetime = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate(), hour, minute, second, 0)
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: timeDialog.open()
-                }
+            onClicked: {
+                var connection = historyModel.get(index)
+                if (!connection.datetimeSpecified)
+                    connection.datetime = new Date()
+                loadConnection(connection)
             }
         }
     }
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property ConnectionsPage connectionsPage
-    Component {
-        id: connectionsComponent
+    property variant connectionsPage
+    property variant datetimeDialog
 
-        ConnectionsPage {}
+
+    //
+    // Auxiliary
+    //
+
+    function loadConnection(connection) {
+        if (!connectionsPage)
+            connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
+
+        pageStack.push(connectionsPage, {
+                       origin: connection.origin,
+                       destination: connection.destination,
+                       datetime: connection.datetime,
+                       departure: connection.departure,
+                       lockDatetime: connection.datetimeSpecified});
     }
 }

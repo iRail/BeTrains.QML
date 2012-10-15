@@ -1,41 +1,18 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import "../components"
 import "../js/utils.js" as Utils
 
 Page {
     id: page
     anchors.fill: parent
 
-    property alias xml: connectionModel.xml
-    property alias id: connectionModel.id
+    property alias xml: viaModel.xml
+    property alias id: viaModel.id
 
     onStatusChanged: {
         if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            // FIXME: revert this to .source when removing the data fetching workaround
-            connectionModel.xml = ""
-        }
-    }
-
-
-    //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.pop()
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
-                window.menu.open()
-            }
+            id = -1
         }
     }
 
@@ -45,33 +22,38 @@ Page {
     //
 
     ListView {
-        id: connectionView
-
-        anchors {
-            fill: parent
-            margins: platformStyle.paddingMedium
-        }
+        id: viaView
+        anchors.fill: parent
+        visible: viaModel.valid
 
         clip: true
-        model: connectionModel
-        delegate: connectionDelegate
+        model: viaModel
+        delegate: viaDelegate
     }
 
     Text {
-        anchors.centerIn: connectionView
-        visible: if (connectionModel.count > 0) false; else true;
+        anchors.centerIn: viaView
+        visible: if (!viaModel.valid || viaModel.count <= 0) true; else false;
         text: {
-            switch (connectionModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
+            switch (viaModel.status) {
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
-                return "No results"
+                return qsTr("No results")
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    BusyIndicator {
+        anchors.centerIn: viaView
+        visible: if (viaModel.status === XmlListModel.Loading) true; else false
+        running: true
+        height: viaView.height / 10
+        width: height
     }
 
 
@@ -80,9 +62,13 @@ Page {
     //
 
     XmlListModel {
-        id: connectionModel
+        id: viaModel
 
         property int id
+
+        property bool valid
+        valid: if (id !== -1 && status === XmlListModel.Ready) true; else false;
+
         query: "/connections/Connections[" + (id + 1) + "]/via"
 
         XmlRole { name: "station"; query: "station/name/string()"; isKey: true }
@@ -97,39 +83,48 @@ Page {
     }
 
     Component {
-        id: connectionDelegate
+        id: viaDelegate
 
         ListItem {
             id: item
 
             Column {
+                anchors.fill: item.paddingItem
+                id: column1
+
                 ListItemText {
                     id: stationText
                     mode: item.mode
                     role: "Title"
-                    text: "Transfer at " + station
+                    text: qsTr("Transfer at %1").arg(station)
                 }
                 ListItemText {
                     id: directionText
                     mode: item.mode
                     role: "SubTitle"
-                    text: "Towards " + direction
+                    text: qsTr("Towards %1").arg(direction)
                 }
             }
             Column {
-                anchors.right: parent.right
+                id: column2
+                anchors {
+                    top: column1.top
+                    right: parent.right
+                    rightMargin: platformStyle.paddingMedium
+                }
+
                 width: Math.max(arrText.width, depText.width)
                 ListItemText {
                     id: arrText
                     mode: item.mode
                     role: "Title"
-                    text: "Platform " + arrival_platform + ", " + Utils.readableTime(Utils.getDateTime(arrival))
+                    text: qsTr("Platform %1, %2").arg(arrival_platform, Utils.readableTime(Utils.getDateTime(arrival)))
                 }
                 ListItemText {
                     id: depText
                     mode: item.mode
                     role: "Title"
-                    text: "Platform " + departure_platform + ", " + Utils.readableTime(Utils.getDateTime(departure))
+                    text: qsTr("Platform %1, %2").arg(departure_platform, Utils.readableTime(Utils.getDateTime(departure)))
                 }
             }
         }

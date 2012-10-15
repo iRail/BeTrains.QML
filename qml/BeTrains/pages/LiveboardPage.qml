@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 import "../components"
 import "../js/utils.js" as Utils
 
@@ -8,102 +9,97 @@ Page {
     id: page
     anchors.fill: parent
 
-    onStatusChanged: {
-        if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            stationField.text = ""
-            liveboardModel.source = ""
-        }
-    }
-
-
-    //
-    // Toolbar
-    //
-
-    tools: ToolBarLayout {
-        // Back buton
-        ToolButton {
-            flat: true
-            iconSource: "toolbar-back"
-            onClicked: pageStack.depth <= 1 ? Qt.quit() : pageStack.pop();
-        }
-
-        // Refresh
-        ToolButton {
-            id: refreshButton
-            iconSource: "toolbar-refresh"
-            onClicked: liveboardModel.reload()
-            enabled: stationField.text.length > 0
-        }
-
-        // Menu
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: {
-                window.menu = Utils.getDynamicObject(window.menu, menuComponent, window)
-                window.menu.open()
-            }
-        }
-    }
+    property alias datetime: liveboardModel.datetime
+    property alias station: liveboardModel.station
 
 
     //
     // Contents
     //
 
-    StationField {
-        id: stationField
-        placeholderText: "Station..."
+    SearchBox {
+        id: liveboardSearch
+        width: parent.width
         anchors {
-            top: parent.top
             left: parent.left
             right: parent.right
-            margins: platformStyle.paddingMedium
         }
+        placeHolderText: qsTr("Station...")
 
+        property alias entering: inactivityTracker.active
         DelayedPropagator {
             id: inactivityTracker
             delay: 750
+            property bool active: false
 
-            input: stationField.text
-            onInputChanged: liveboardModel.station = ""
-            onOutputChanged: liveboardModel.station = output
+            contents: liveboardSearch.searchText
+            onInput: {
+                active = true
+                liveboardModel.station = ""
+                liveboardModel.update(false)
+            }
+            onOutput: {
+                active = false
+                liveboardModel.station = contents
+                liveboardModel.update(false)
+            }
         }
     }
 
     ListView {
         id: liveboardView
         anchors {
-            top: stationField.bottom
+            top: liveboardSearch.bottom
             bottom: parent.bottom
             left: parent.left
             right: parent.right
-            margins: platformStyle.paddingMedium
         }
+        visible: if (liveboardModel.valid && !liveboardSearch.entering) true; else false
         clip: true
         model: liveboardModel
         delegate: liveboardDelegate
+        header: liveboardHeader
     }
 
     Text {
         anchors.centerIn: liveboardView
-        visible: if (liveboardModel.count > 0) false; else true;
+        visible: if (!liveboardModel.valid || liveboardSearch.entering || liveboardModel.count <= 0) true; else false
         text: {
             switch (liveboardModel.status) {
-            case XmlListModel.Loading:
-                return "Loading..."
             case XmlListModel.Error:
-                return "Error!"
+                return qsTr("Error!")
             case XmlListModel.Ready:
-                if (liveboardModel.source.toString())
-                    return "No results"
+                if (liveboardModel.valid)
+                    return qsTr("No results")
                 // Deliberate fall-through
             case XmlListModel.Null:
-                return "Enter a station"
+                return qsTr("Enter a station")
+            default:
+                return ""
             }
         }
         color: platformStyle.colorDisabledLight
         font.pixelSize: platformStyle.fontSizeLarge
+    }
+
+    Component {
+        id: liveboardHeader
+
+        PullDownHeader {
+            view: liveboardView
+            onPulled: {
+                datetime = new Date()
+                liveboardModel.update(true)
+            }
+        }
+    }
+
+    BusyIndicator {
+        anchors.centerIn: liveboardView
+        visible: if (liveboardModel.status === XmlListModel.Loading) true; else false
+        running: true
+        height: liveboardView.height / 10
+        width: height
     }
 
 
@@ -117,12 +113,18 @@ Page {
         property string station
         property date datetime: new Date()
 
-        onStationChanged: {
-            source = ""
+        function update(forceReload) {
             if (station !== "") {
                 source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
+
+                // If the URL is identical, force a reload
+                if (forceReload && status === XmlListModel.Ready)
+                    reload()
             }
         }
+
+        property bool valid
+        valid: if (station !== "" && status === XmlListModel.Ready) true; else false;
 
         query: "/liveboard/Liveboard/departures"
 
@@ -141,6 +143,9 @@ Page {
             subItemIndicator: true
 
             Column {
+                anchors.fill: item.paddingItem
+                id: column1
+
                 ListItemText {
                     id: stationText
                     mode: item.mode
@@ -151,41 +156,49 @@ Page {
                     id: platformText
                     mode: item.mode
                     role: "SubTitle"
-                    text: "Platform " + platform
+                    visible: if (platform !== "") true; else false
+                    text: qsTr("Platform %1").arg(platform)
                 }
             }
             Column {
-                anchors.right: parent.right
-                width: Math.max(timeText.width, delayText.width) + platformStyle.graphicSizeSmall
+                id: column2
+                anchors {
+                    top: column1.top
+                    right: parent.right
+                    // FIXME: don't use platformStyle.paddingX, but get the padding of item.paddingItem
+                    rightMargin: platformStyle.graphicSizeSmall + platformStyle.paddingSmall
+                }
+                width: Math.max(timeText.width, delayText.width)
                 ListItemText {
                     id: timeText
+                    anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "Title"
                     text: Utils.readableTime(Utils.getDateTime(time))
                 }
                 ListItemText {
                     id: delayText
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: "red"
                     mode: item.mode
                     role: "SubTitle"
-                    text: delay > 0 ? "+" + Utils.readableDuration(delay) : ""
+                    visible: if (delay > 0) true; else false
+                    text: "+" + Utils.readableDuration(delay)
                 }
             }
 
             onClicked: {
-                vehiclePage = Utils.getDynamicObject(vehiclePage, vehicleComponent, page)
-                pageStack.push(vehiclePage, {id: vehicle});
+                if (!vehiclePage)
+                    vehiclePage = Utils.loadObjectByPath("pages/VehiclePage.qml", page)
+                pageStack.push(vehiclePage, {id: vehicle, datetime: Utils.getDateTime(time)});
             }
         }
     }
 
 
     //
-    // Dynamic components
+    // Objects
     //
 
-    property VehiclePage vehiclePage
-    Component {
-        id: vehicleComponent
-        VehiclePage {}
-    }
+    property variant vehiclePage
 }

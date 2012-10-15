@@ -1,89 +1,98 @@
 import QtQuick 1.1
 import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 import "pages"
 import "components"
 import "js/utils.js" as Utils
+import "js/storage.js" as Storage
 
 Window {
     id: window
+
+    property string __schemaIdentification: "2"
+
+    Component.onCompleted: {
+        Storage.initialize()
+    }
 
     //
     // Window structure
     //
 
-    StatusBar {
-        id: statusBar
-        anchors.top: window.top
-    }
-
-    TabBarLayout {
-        id: tabBarLayout
-        anchors {
-            left: parent.left;
-            right: parent.right;
-            top: statusBar.bottom
-        }
-        TabButton { tab: liveboardTab; text: "Liveboard" }
-        TabButton { tab: travelTab; text: "Travel" }
-    }
-
-    TabGroup {
-        id: tabGroup
-        currentTab: liveboardTab
-
-        anchors {
-            left: parent.left;
-            right: parent.right
-            top: tabBarLayout.bottom;
-            bottom: parent.bottom
-        }
+    PageStackWindow {
+        initialPage: mainPage
+        showStatusBar: true
+        showToolBar: true
 
         Page {
-            id: liveboardTab
+            id: mainPage
+            tools: toolBarLayout
 
-            PageStack {
-                id: liveboardPageStack
-                toolBar: liveboardToolBar
+            TabGroup {
+                id: tabGroup
+                currentTab: liveboardStack
+                anchors.fill: parent
 
-                Component.onCompleted: {
-                    push(liveboardPage);
+                PageStack {
+                    id: liveboardStack
+                    Component.onCompleted: liveboardStack.push(liveboardPage)
                 }
-            }
 
-            ToolBar {
-                id: liveboardToolBar
-                anchors.bottom: parent.bottom
-            }
-        }
-
-        Page {
-            id: travelTab
-
-            PageStack {
-                id: travelPageStack
-                toolBar: travelToolBar
-
-                Component.onCompleted: {
-                    push(travelPage)
+                PageStack {
+                    id: travelStack
+                    Component.onCompleted: travelStack.push(travelPage)
                 }
-            }
-
-            ToolBar {
-                id: travelToolBar
-                anchors.bottom: parent.bottom
             }
         }
     }
 
 
     //
-    // Dynamic components
+    // Toolbar
     //
 
-    property LiveboardPage liveboardPage : LiveboardPage {}
-    property TravelPage travelPage : TravelPage {}
+    ToolBarLayout {
+        id: toolBarLayout
 
-    property Menu menu
+        // Back buton
+        ToolButton {
+            property bool closeButton: tabGroup.currentTab.depth <= 1
+            flat: true
+            iconSource: closeButton ? "icons/close.svg" : "toolbar-back"
+            onClicked: closeButton ? Qt.quit() : tabGroup.currentTab.pop();
+        }
+
+        // Tab bar
+        ButtonRow {
+            TabButton { tab: liveboardStack; iconSource: "toolbar-list" }
+            TabButton { tab: travelStack; iconSource: "toolbar-search" }
+        }
+
+        // Menu
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: {
+                if (!window.menu)
+                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
+                window.menu.open()
+            }
+        }
+    }
+
+
+    //
+    // Objects
+    //
+
+    // Statically loaded objects
+    property variant liveboardPage: LiveboardPage {}
+    property variant travelPage: TravelPage {}
+
+    // Dynamically loaded objects
+    property variant aboutDialog
+
+    // In-line defined menu component
+    property variant menu
     Component {
         id: menuComponent
 
@@ -92,19 +101,20 @@ Window {
             content: MenuLayout {
                 // About
                 MenuItem {
-                    text: "About"
+                    text: qsTr("About")
                     onClicked: {
-                        about = Utils.getDynamicObject(about, aboutComponent, menu)
-                        about.open()
+                        if (!aboutDialog)
+                            aboutDialog = Utils.loadObjectByPath("components/AboutDialog.qml", menu)
+                        aboutDialog.open()
                     }
+                }
+
+                // Quit
+                MenuItem {
+                    text: qsTr("Quit")
+                    onClicked: Qt.quit()
                 }
             }
         }
-    }
-    property Dialog about
-    Component {
-        id: aboutComponent
-
-        AboutDialog {}
     }
 }

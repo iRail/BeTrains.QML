@@ -3,7 +3,7 @@ import com.nokia.symbian 1.1
 
 QueryDialog {
     id: dialog
-    titleText: "About BeTrains"
+    titleText: qsTr("About BeTrains")
     message: "<p>"
              + "<strong>BeTrains</strong> is part of the <a href=\"http://betrains.com\">BeTrains</a> project, and made possible by:"
              + "<ul>"
