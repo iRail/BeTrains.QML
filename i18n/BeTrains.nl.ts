@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="nl" version="2.0">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0" language="nl">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -10,7 +12,10 @@
     <name>ConnectionsPage</name>
     <message numerus="yes">
         <source>Via %n other(s)</source>
-        <translation><numerusform>Via %n tussenhalte</numerusform><numerusform>Via %n tussenhaltes</numerusform></translation>
+        <translation>
+            <numerusform>Via %n tussenhalte</numerusform>
+            <numerusform>Via %n tussenhaltes</numerusform>
+        </translation>
     </message>
     <message>
         <source>From: </source>
@@ -33,8 +38,8 @@
         <translation>Rechtstreeks</translation>
     </message>
     <message>
-        <source>%1 en route</source>
-        <translation>%1 onderweg</translation>
+        <source>travel time: %1</source>
+        <translation>Reistijd: %1</translation>
     </message>
 </context>
 <context>
@@ -68,7 +73,7 @@
     </message>
     <message>
         <source>Hold to refresh...</source>
-        <translation>Hou vast om te vernieuwen</translation>
+        <translation>Vasthouden om te vernieuwen</translation>
     </message>
     <message>
         <source>Refreshing!</source>
@@ -126,7 +131,7 @@
     <name>TravelTimeDialog</name>
     <message>
         <source>Depart</source>
-        <translation>Vertrekken</translation>
+        <translation>Vertrek</translation>
     </message>
     <message>
         <source>Arrive</source>
@@ -164,15 +169,50 @@
     </message>
     <message>
         <source>Transfer at %1</source>
-        <translation>Overstappen in %1</translation>
+        <translation>Overstap in %1</translation>
     </message>
     <message>
         <source>Towards %1</source>
         <translation>Richting %1</translation>
     </message>
     <message>
-        <source>Platform %1, %2</source>
-        <translation>Spoort %1, %2</translation>
+        <source>No vias</source>
+        <translation>Geen overstappen</translation>
+    </message>
+    <message>
+        <source>Arrival: platform %1 at %2</source>
+        <translation>Aankomst: spoor %1 om %2</translation>
+    </message>
+    <message>
+        <source>Departure: platform %1 at %2</source>
+        <translation>Vertrek: spoor %1 om %2</translation>
+    </message>
+    <message>
+        <source>Platform %1</source>
+        <translation>Spoor %1</translation>
+    </message>
+    <message>
+        <source>Board at %1</source>
+        <translation>Instappen te %1</translation>
+    </message>
+    <message>
+        <source>Arrive at %1</source>
+        <translation>Aankomst in %1</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>About</source>
+        <translation>Over</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Afsluiten</translation>
+    </message>
+    <message>
+        <source>BeTrains</source>
+        <translation>BeTrains</translation>
     </message>
 </context>
 </TS>

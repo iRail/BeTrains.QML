@@ -10,13 +10,6 @@
 </context>
 <context>
     <name>ConnectionsPage</name>
-    <message numerus="yes">
-        <source>Via %n other(s)</source>
-        <translation type="unfinished">
-            <numerusform>Via %n other</numerusform>
-            <numerusform>Via %n others</numerusform>
-        </translation>
-    </message>
     <message>
         <source>From: </source>
         <translation type="unfinished"></translation>
@@ -33,12 +26,19 @@
         <source>No results</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <source>Via %n other(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
         <source>Direct connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 en route</source>
+        <source>travel time: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -164,11 +164,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No results</source>
+        <source>No vias</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Transfer at %1</source>
+        <source>No results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -176,7 +176,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Platform %1, %2</source>
+        <source>Arrival: platform %1 at %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Departure: platform %1 at %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Platform %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Board at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arrive at %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -188,6 +208,10 @@
     </message>
     <message>
         <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeTrains</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -19,6 +19,7 @@ function createTables() {
     __db.transaction(
         function(tx) {
             tx.executeSql("CREATE TABLE IF NOT EXISTS settings(setting TEXT UNIQUE, value TEXT)")
+            tx.executeSql("CREATE TABLE IF NOT EXISTS stations(id TEXT UNIQUE, x TEXT, y TEXT, name TXT)")
             tx.executeSql("CREATE TABLE IF NOT EXISTS connections(id INTEGER PRIMARY KEY ASC, origin TEXT, destination TEXT, datetimeSpecified TEXT, datetime TEXT, datetimeType TEXT, favorite TEXT)")
         }
     )
@@ -29,6 +30,7 @@ function reset() {
         function(tx) {
             tx.executeSql("DROP TABLE settings;")
             tx.executeSql("DROP TABLE connections;")
+            tx.executeSql("DROP TABLE stations;")
         }
     )
 }
@@ -120,4 +122,69 @@ function updateConnection(connection) {
         }
     )
     return res
+}
+
+function removeConnection(connection) {
+    var res = "Unknown"
+    __db.transaction(
+        function(tx) {
+            var rs = tx.executeSql("DELETE FROM connections WHERE id=?;",    [connection.id])
+            if (rs.rowsAffected > 0)
+                res = "OK"
+        }
+    )
+    return res
+}
+
+//
+//=====================================================================================================
+//=====================================================================================================
+// Code for storage of stations list
+//
+
+function loadStationList(language) {
+    if (language!=="nl" && language!=="fr" && language!=="de" && language!=="en") {language="nl"}
+    xmlDoc.load("http://api.irail.be/stations/?lang="+language);
+    xmlObj=xmlDoc.documentElement;
+
+    for (var i=0;i<xmlObj.childNodes.length;i++)
+    {
+        var name= xmlObj.childNodes(i).firstChild.text
+        var id =  xmlObj.childNodes(i).getAttribute("id")
+        var x =  xmlObj.childNodes(i).getAttribute("locationX")
+        var y =  xmlObj.childNodes(i).getAttribute("locationY")
+        insertStation(id,x,y,name)
+    }
+
+}
+
+function insertStation(id,x,y,name) {
+
+    var rs = tx.executeSql("INSERT INTO stations(id, x, y, name) VALUES (?,?,?,?);",[id,x,y,name])
+    if (!rs.rowsAffected) {rs = tx.executeSql("UPDATE stations SET x=?, y=?, name=? WHERE id=?;",       [x,y,name,id])}
+    return rs.rowsAffected
+
+}
+
+function getStation(id) {
+    var rs = tx.executeSql("SELECT x,y,name FROM stations WHERE id=?",[id])
+    var x = rs.rows.item(0).x
+    var y = rs.rows.item(0).y
+    var name = rs.rows.item(0).name
+    return [x,y,name]
+}
+
+function getStationNear(x,y) {
+  var rawx=x.substring(0, x.length - 4)
+  var rawy=y.substring(0, y.length - 4)
+  var rs = tx.executeSql("SELECT id,x,y,name FROM stations WHERE x LIKE ?% AND y LIKE ?%",[rawx,rawy])
+    var results = new Array();
+    for (var i=0;i<tx.rows.length;i++)
+    {
+        var res_id = rs.rows.item(i).id
+        var res_x = rs.rows.item(i).x
+        var res_y = rs.rows.item(i).y
+        var res_name = rs.rows.item(i).name
+        results[i]=[res_id,res_x,res_y,res_name]
+    }
 }

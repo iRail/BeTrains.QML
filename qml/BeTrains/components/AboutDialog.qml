@@ -8,6 +8,7 @@ QueryDialog {
              + "<strong>BeTrains</strong> is part of the <a href=\"http://betrains.com\">BeTrains</a> project, and made possible by:"
              + "<ul>"
              + "<li><a href=\"mailto:tim.besard@gmail.com\">Tim Besard</a></li>"
+             + "<li><a href=\"mailto:contact@bertware.com\">Bert Marcelis</a></li>"
              + "</ul>"
              + "... and many others"
              + "</p>"
