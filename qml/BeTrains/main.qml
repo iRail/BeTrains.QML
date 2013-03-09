@@ -5,30 +5,25 @@ import "pages"
 import "components"
 import "js/utils.js" as Utils
 import "js/storage.js" as Storage
+import QtQuick 1.0
 
-Window {
-    id: window
-
-    property string __schemaIdentification: "2"
-
-    Component.onCompleted: {
-        Storage.initialize()
-    }
 
     //
     // Window structure
     //
 
     PageStackWindow {
+        id: pagestackwindow
         initialPage: mainPage
         showStatusBar: true
         showToolBar: true
 
         Page {
-            id: mainPage
-            tools: toolBarLayout
+           id: mainPage
 
-            TabGroup {
+           tools: toolBarLayout
+
+             TabGroup {
                 id: tabGroup
                 currentTab: liveboardStack
                 anchors.fill: parent
@@ -40,11 +35,13 @@ Window {
 
                 PageStack {
                     id: travelStack
-                    Component.onCompleted: travelStack.push(travelPage)
+                    Component.onCompleted: {   Storage.initialize(); travelStack.push(travelPage)}
                 }
-            }
+
+             }
         }
-    }
+
+
 
 
     //
@@ -63,20 +60,22 @@ Window {
         }
 
         // Tab bar
+
         ButtonRow {
-            TabButton { tab: liveboardStack; iconSource: "toolbar-list" }
-            TabButton { tab: travelStack; iconSource: "toolbar-search" }
+            TabButton { id: tabBtnLiveboard; tab: liveboardStack; iconSource: "toolbar-list" }
+            TabButton { id:tabBtnTravel; tab: travelStack; iconSource: "toolbar-search" }
         }
 
         // Menu
         ToolButton {
             iconSource: "toolbar-menu"
             onClicked: {
-                if (!window.menu)
-                    window.menu = Utils.loadObjectByComponent(menuComponent, window)
-                window.menu.open()
+                if (!pagestackwindow.menu)
+                    pagestackwindow.menu = Utils.loadObjectByComponent(menuComponent, pagestackwindow)
+                pagestackwindow.menu.open()
             }
         }
+
     }
 
 
@@ -116,5 +115,16 @@ Window {
                 }
             }
         }
+    }
+
+    Text {
+        id: statustext
+        x: 2
+        y: 2
+        width: 230
+        height: 22
+        color: "#ffffff"
+        text: qsTr("BeTrains")
+        font.pixelSize: 20
     }
 }

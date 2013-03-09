@@ -7,8 +7,10 @@ Page {
     id: page
     anchors.fill: parent
 
+
     property alias id: vehicleModel.vehicle
     property alias datetime: vehicleModel.datetime
+property alias stationname:vehicleModel.stationname
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
@@ -69,8 +71,8 @@ Page {
         anchors.centerIn: vehicleView
         visible: if (vehicleModel.status === XmlListModel.Loading) true; else false
         running: true
-        height: vehicleView.height / 10
-        width: height
+    //    height: vehicleView.height / 10
+     //   width: height
     }
 
 
@@ -82,17 +84,21 @@ Page {
         id: vehicleModel
 
         property string vehicle
+        property string stationname
         property date datetime
 
         function update(forceReload) {
-            // FIXME: working around API bug
-            vehicle = vehicle.replace('BE.NMBS.', '')
+            // FIXME: working around API bug for data.irail
+            //vehicle = vehicle.replace('BE.NMBS.', '')
 
             if (vehicle !== "") {
-                source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
-
+                //source = "http://data.irail.be/NMBS/Vehicle/" + vehicle + "/" + Utils.generateDateUrl(datetime) + ".xml"
+//&time=" + Utils.generateAPITimeUrl(datetime) + "&date="+ Utils.generateAPIDateUrl(datetime)
+                source="http://api.irail.be/vehicle/?id=" + vehicle + "&fast=true"
+                console.log("Loading vehicle page info from " + source )
                 // If the URL is identical, force a reload
                 if (forceReload && status === XmlListModel.Ready)
+                    console.log("Loading vehicle page info from " + source )
                     reload()
             }
         }
@@ -101,11 +107,12 @@ Page {
         valid: if (vehicle !== "" && status === XmlListModel.Ready) true; else false;
 
         source: ""
-        query: "/vehicle/Vehicle/stops"
+        query: "/vehicleinformation/stops/stop"
 
-        XmlRole { name: "station"; query: "station/name/string()"; isKey: true}
+        XmlRole { name: "station"; query: "station/string()"; isKey: true}
         XmlRole { name: "time"; query: "time/number()"; isKey: true }
-        XmlRole { name: "delay"; query: "delay/number()" }
+        XmlRole { name: "delay"; query: "@delay/number()" }
+
     }
 
     Component {
@@ -146,9 +153,23 @@ Page {
                     role: "SubTitle"
                     color: "red"
                     visible: if (delay > 0) true; else false
-                    text: "+" + Utils.readableDuration(delay)
+                    text:  Utils.readableDelay(delay)
                 }
+            }
+
+            onClicked: {
+                if (!liveboardpage)
+                    liveboardpage = Utils.loadObjectByPath("pages/LiveboardPage.qml", page)
+                liveboardpage.station=station
+                liveboardpage.searchtext=station
+                pageStack.push(liveboardpage, {station: station, datetime: Utils.getDateTime(time)});
             }
         }
     }
+    //
+    // Objects
+    //
+
+    property variant liveboardpage
 }
+

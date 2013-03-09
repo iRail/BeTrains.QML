@@ -14,15 +14,7 @@ Page {
     property bool lockDatetime
 
     onStatusChanged: {
-        if (status === PageStatus.Activating) {
-            connectionsModel.update(false)
-        } else if (status === PageStatus.Inactive && !pageStack.find(function(_page) { return (_page === page) } )) {
-            origin = ""
-            destination = ""
-            datetime = new Date()
-            lockDatetime = true
-            departure = true
-        }
+       connectionsModel.update(false)
     }
 
 
@@ -32,7 +24,7 @@ Page {
 
     Column {
         id: information
-        width: parent.width
+        width: parent.width-40
         anchors {
             top: parent.top
             bottomMargin: platformStyle.paddingLarge
@@ -40,6 +32,7 @@ Page {
         }
 
         Row {
+            id: departureRow
             width: parent.width
             Text {
                 text: qsTr("From: ")
@@ -56,10 +49,12 @@ Page {
 
                 color: platformStyle.colorNormalLight
                 font.pixelSize: platformStyle.fontSizeLarge
+
             }
         }
 
         Row {
+            id:destinationRow
             width: parent.width
             Text {
                 text: qsTr("To: ")
@@ -76,17 +71,38 @@ Page {
 
                 color: platformStyle.colorNormalLight
                 font.pixelSize: platformStyle.fontSizeLarge
+
+
             }
         }
+
     }
+    Button {
+        id: btnSwap
+        height: destinationRow.height+departureRow.height
+        anchors.top:parent.top
+        anchors.left: information.right
+        text: ""
+        anchors.topMargin: 0
+        iconSource: "../icons/swap.png"
+        onClicked: {
+            var swap=origin
+            origin=destination
+            destination=swap
+            connectionsModel.update(false)
+        }
+    }
+
+
 
     ListView {
         id: connectionsView
         width: parent.width
+        anchors.bottomMargin: 0
+        anchors.topMargin:10
         anchors {
             top: information.bottom
             bottom: parent.bottom
-            margins: platformStyle.paddingMedium
         }
         visible: if (connectionsModel.valid) true; else false
 
@@ -137,8 +153,8 @@ Page {
         anchors.centerIn: connectionsView
         visible: if (connectionsModel.status === XmlListModel.Loading || connectionsModel.loading) true; else false
         running: true
-        height: connectionsView.height / 10
-        width: height
+    //    height: connectionsView.height / 10
+    //    width: height
     }
 
 
@@ -153,63 +169,74 @@ Page {
         property string destination
         property date datetime
         property bool departure
-        property string _source: ""
+   property string _source: ""
 
         function update(forceReload) {
-            if (origin !== "" && destination !== "") {
-                var source = "http://data.irail.be/NMBS/Connections/" + origin + "/" + destination + "/" + Utils.generateDateUrl(datetime) + ".xml"
-                if (!departure)
-                    source = source + "?timeSel=arrival"
+                    if (origin !== "" && destination !== "") {
+                        var source ="http://api.irail.be/connections/?to="+destination+"&from="+origin+"&date="+ Utils.generateAPIDateUrl(datetime)+"&time="+Utils.generateAPITimeUrl(datetime)+"&lang=nl&fast=true"
+                        if (!departure)
+                            source = source + "?timeSel=arrival"
 
-                // WORKAROUND: this is a work-around, using a separate XMLHttpRequest object so we actually
-                // have access to the downloaded source afterwards (in order to pass it to the ConnectionPage).
-                // FIX 1: get access to the model its xml property after having used the source property
-                // FIX 2: use a XPath function to acquire the source of a connection
-                // FIX 3: use a hierarchical ListView (TreeView)
-                if (forceReload || source !== _source) {
-                    var doc = new XMLHttpRequest();
-                    doc.onreadystatechange = function() {
-                                if (doc.readyState === XMLHttpRequest.DONE) {
-                                    if (doc.status != 200) {
-                                        error = true
-                                        loading = false
-                                    } else {
-                                        error = false
-                                        loading = false
-                                        connectionsModel.xml = doc.responseText
+
+
+
+                        // WORKAROUND: this is a work-around, using a separate XMLHttpRequest object so we actually
+                        // have access to the downloaded source afterwards (in order to pass it to the ConnectionPage).
+                        // FIX 1: get access to the model its xml property after having used the source property
+                        // FIX 2: use a XPath function to acquire the source of a connection
+                        // FIX 3: use a hierarchical ListView (TreeView)
+                        if (forceReload || source !== _source) {
+                            console.log("Loading connections - source URL for connections:" + source)
+
+                            var doc = new XMLHttpRequest();
+                            doc.onreadystatechange = function() {
+                                        if (doc.readyState === XMLHttpRequest.DONE) {
+                                            if (doc.status != 200) {
+                                                error = true
+                                                loading = false
+                                            } else {
+                                                error = false
+                                                loading = false
+                                                connectionsModel.xml = doc.responseText
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                    loading = true
-                    doc.open("GET", source);
-                    doc.send();
+                            loading = true
+                            doc.open("GET", source);
+                            doc.send();
 
-                    // NOTE: this is to prevent redundant fetches when an identical source is configured
-                    // (the XmlListModel doesn't refetch either when passed an identical source, does it?)
-                    _source = source
+                            // NOTE: this is to prevent redundant fetches when an identical source is configured
+                            // (the XmlListModel doesn't refetch either when passed an identical source, does it?)
+                            _source = source
+                        }
+                    }
                 }
-            }
-        }
 
-        // WORKAROUND: properties indicating the status of the XML fetch, as we can't (due to our
-        // workaround) check the XmlListModel for them
-        property bool loading: false
-        property bool error: false
+                // WORKAROUND: properties indicating the status of the XML fetch, as we can't (due to our
+                // workaround) check the XmlListModel for them
+                property bool loading: false
+                property bool error: false
 
-        property bool valid
-        valid: if (origin !== "" && destination !== "" && status === XmlListModel.Ready && !loading && !error) true; else false;
+                property bool valid
+                valid: if (origin !== "" && destination !== "" && status === XmlListModel.Ready && !loading && !error) true; else false;
 
-        query: "/connections/Connections"
 
-        XmlRole { name: "origin"; query: "departure/station/name/string()"; isKey: true }
-        XmlRole { name: "departure"; query: "departure/time/string()"; isKey: true }
-        XmlRole { name: "delay"; query: "departure/delay/number()"; }
-        XmlRole { name: "vias"; query: "count(via)"; }
 
-        XmlRole { name: "destination"; query: "arrival/station/name/string()"; isKey: true }
-        XmlRole { name: "arrival"; query: "arrival/time/string()"; isKey: true }
+        query: "/connections/connection"
+
+        XmlRole { name: "origin"; query: "departure/station/string()";  }
+        XmlRole { name: "time"; query: "departure/time/number()"; }
+        XmlRole { name: "vias"; query: "count(vias)"; }
+        XmlRole { name: "direction"; query: "departure/direction/string()"; }
+        XmlRole { name: "departure_track"; query:"departure/platform/string()";}
+
+        XmlRole { name: "destination"; query: "arrival/station/string()";  }
+        XmlRole { name: "arrival"; query: "arrival/time/number()"; }
+        XmlRole { name: "arrival_track"; query:"arrival/platform/string()";}
 
         XmlRole { name: "duration"; query: "duration/number()"; }
+        XmlRole { name: "departure_delay"; query: "departure/@delay/number()"; }
+        XmlRole { name: "arrival_delay"; query: "arrival/@delay/number()"; }
     }
 
     Component {
@@ -217,7 +244,7 @@ Page {
 
         ListItem {
             id: item
-            subItemIndicator: if (vias > 0) true; else false;
+            subItemIndicator: true //if (vias > 0) true; else false;
 
             Column {
                 anchors.fill: item.paddingItem
@@ -227,13 +254,13 @@ Page {
                     id: viaText
                     mode: item.mode
                     role: "Title"
-                    text: (vias > 0 ? qsTr("Via %n other(s)", "", vias) : qsTr("Direct connection"))
+                    text: Utils.removeNMBSSNCB(direction)
                 }
                 ListItemText {
                     id: durationText
                     mode: item.mode
                     role: "SubTitle"
-                    text: qsTr("%1 en route").arg(Utils.readableDuration(duration))
+                    text: (vias > 0 ? qsTr("Via %n other(s)", "", vias) : qsTr("Direct connection")) + " - " + qsTr("travel time: %1").arg(Utils.readableDuration(duration))
                 }
             }
             Column {
@@ -250,22 +277,22 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     mode: item.mode
                     role: "Title"
-                    text: Utils.readableTime(Utils.getDateTime(departure))
+                    text: Utils.parseUNIXTime(time)
                 }
+
                 ListItemText {
                     id: delayText
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: "red"
                     mode: item.mode
                     role: "SubTitle"
-                    visible: if (delay > 0) true; else false
-                    text: "+" + Utils.readableDuration(delay)
+                    visible: if (departure_delay > 0 || arrival_delay > 0) true; else false
+                    text: Utils.readableDelay(departure_delay)
                 }
             }
-
             onClicked: {
-                if (vias === 0)
-                    return;
+               // if (vias === 0)
+               //     return;
                 if (!viaPage)
                     viaPage = Utils.loadObjectByPath("pages/ViaPage.qml", page)
                 pageStack.push(viaPage, {xml: connectionsModel.xml, id: connectionsView.currentIndex});

@@ -9,86 +9,126 @@ Page {
     id: page
     anchors.fill: parent
 
+
     property date __datetime: new Date()
     property bool __datetimeSpecified: false
     property bool __departure: true
-
+    property bool _editHistory:false
 
     //
     // Contents
     //
+    state: (screen.currentOrientation === Screen.Portrait) ? "portrait" : "landscape"
 
-    Column {
-        id: configuration
-        spacing: platformStyle.paddingMedium
+    states: [
+        State {
+            name: "landscape"
 
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
-            margins: platformStyle.paddingMedium
+            PropertyChanges {
+                target: originField;
+                width: (parent.width/2)-(swapButton.width/2)
+                anchors.top:parent.top
+                anchors.left: parent.left
+            }
+
+            PropertyChanges {
+                target: destinationField;
+                width: (parent.width/2)-(swapButton.width/2)
+                anchors.top:parent.top
+                anchors.left: originField.right
+            }
+            PropertyChanges {
+                target: swapButton;
+                anchors.top:parent.top
+                anchors.left: destinationField.right
+                height:destinationField.height
+            }
+        },
+        State {
+            name: "portrait"
+
+            PropertyChanges {
+                target: originField;
+                width: parent.width-swapButton.width
+                anchors.top:parent.top
+                anchors.left: parent.left
+            }
+
+            PropertyChanges {
+                target: destinationField;
+                width: parent.width-swapButton.width
+                anchors.top:originField.bottom
+                anchors.left: parent.left
+            }
+            PropertyChanges {
+                target: swapButton;
+                anchors.top:parent.top
+                anchors.left: destinationField.right
+                height:destinationField.height*2
+            }
         }
+    ]
 
-        Row {
-            width: parent.width
-            spacing: platformStyle.paddingMedium
 
-            Column {
-                id: stationColumn
-                width: parent.width - swapButton.width - parent.spacing
-                spacing: platformStyle.paddingSmall
+    TextField {
+        id: originField
+        x:0
+        y:0
+        placeholderText: qsTr("Origin...")
+        width: parent.width-swapButton.width
+        anchors.top:parent.top
+        anchors.left: parent.left
+        KeyNavigation.tab: destinationField
+    }
 
-                StackableSearchBox {
-                    id: originField
-                    placeHolderText: qsTr("Origin...")
-                    width: parent.width
-                    KeyNavigation.tab: destinationField
-                }
+    TextField {
+        id: destinationField
+        placeholderText: qsTr("Destination...")
+        width: parent.width-swapButton.width
+        anchors.top:originField.bottom
+        anchors.left: parent.left
+    }
 
-                StackableSearchBox {
-                    id: destinationField
-                    placeHolderText: qsTr("Destination...")
-                    width: parent.width
-                }
-            }
 
-            Button {
-                id: swapButton
-                height: stationColumn.height
-                iconSource: "../icons/swap.png"
-
-                onClicked: {
-                    var temp = destinationField.searchText
-                    destinationField.searchText = originField.searchText
-                    originField.searchText = temp
-                    swapButton.focus = true
-                }
-            }
-        }
-
-        SelectionListItem {
-            title: (__departure ? qsTr("Departure") : qsTr("Arrival"))
-            subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : qsTr("Right now"))
-
-            function __onDialogAccepted() {
-                __departure = datetimeDialog.departure
-                __datetime = datetimeDialog.datetime
-                __datetimeSpecified = datetimeDialog.specified
-            }
-
-            width: parent.width
-            onClicked: {
-                if (!datetimeDialog) {
-                    datetimeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
-                    datetimeDialog.accepted.connect(__onDialogAccepted)
-                }
-                datetimeDialog.departure = __departure
-                datetimeDialog.datetime = __datetime
-                datetimeDialog.specified = __datetimeSpecified
-                datetimeDialog.open()
-            }
+    Button {
+        id: swapButton
+        iconSource: "../icons/swap.png"
+        anchors.top:parent.top
+        anchors.left: destinationField.right
+        height:destinationField.height*2
+        onClicked: {
+            var temp = destinationField.searchText
+            destinationField.searchText = originField.searchText
+            originField.searchText = temp
+            swapButton.focus = true
         }
     }
+
+
+    SelectionListItem {
+        id:selectionListItm
+        title: (__departure ? qsTr("Departure") : qsTr("Arrival"))
+        subTitle:  (__datetimeSpecified ? (__datetime.toLocaleString()) : qsTr("Right now"))
+        anchors.top:destinationField.bottom
+        function __onDialogAccepted() {
+            __departure = datetimeDialog.departure
+            __datetime = datetimeDialog.datetime
+            __datetimeSpecified = datetimeDialog.specified
+        }
+
+        width: parent.width
+        onClicked: {
+            if (!datetimeDialog) {
+                datetimeDialog = Utils.loadObjectByPath("components/TravelTimeDialog.qml", page)
+                datetimeDialog.accepted.connect(__onDialogAccepted)
+            }
+            datetimeDialog.departure = __departure
+            datetimeDialog.datetime = __datetime
+            datetimeDialog.specified = __datetimeSpecified
+            datetimeDialog.open()
+        }
+    }
+
 
     ListView {
         id: historyView
@@ -96,7 +136,7 @@ Page {
         anchors {
             left: parent.left
             right: parent.right
-            top: configuration.bottom
+            top: selectionListItm.bottom
             bottom: parent.bottom
             topMargin: platformStyle.paddingLarge
         }
@@ -117,16 +157,16 @@ Page {
                 }
 
                 onClicked: {
-                    if (originField.searchText === "" || destinationField.searchText === "") {
+                    if (originField.text === "" || destinationField.text === "") {
                         banner.text = qsTr("Please fill out both station fields")
                         banner.open()
                     } else {
-                        var connection = {"origin": originField.searchText,
-                            "destination": destinationField.searchText,
+                        var connection = {"origin": originField.text,
+                            "destination": destinationField.text,
                             "datetimeSpecified": __datetimeSpecified,
                             "datetime": __datetimeSpecified ? __datetime : new Date(),
-                            "departure": __departure,
-                            "favorite": false}
+                                                              "departure": __departure,
+                                                              "favorite": false}
                         historyModel.addConnection(connection)
                         loadConnection(connection)
                     }
@@ -138,7 +178,7 @@ Page {
     }
 
     InfoBanner {
-         id: banner
+        id: banner
     }
 
 
@@ -167,14 +207,13 @@ Page {
             subItemIndicator: true
 
             Row {
-                anchors.fill: item.paddingItem
-                spacing: platformStyle.paddingLarge
-
+                spacing: platformStyle.paddingMedium
+                width:parent.width
                 Image {
-                    anchors.verticalCenter: parent.verticalCenter
+
                     id: favoriteIcon
                     source: privateStyle.imagePath("qtg_graf_rating_rated", page.platformInverted)
-
+                    anchors.verticalCenter: parent.verticalCenter
                     states: [
                         State { name: "Favorite"; when: favorite
                             PropertyChanges {target: favoriteIcon; opacity: 1}
@@ -221,13 +260,51 @@ Page {
                         }
                     }
                 }
-            }
+                Column {
+                    id: editFavouriteCollumn
+                    visible:_editHistory
+                     anchors.right: removeItemCollumn.left
+
+                    width:50
+                    Button {
+                        id: favouriteButton
+                        visible:_editHistory
+                        iconSource:privateStyle.imagePath("qtg_graf_rating_rated", page.platformInverted)
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        onClicked: {
+                            var connection = historyModel.get(index)
+                            connection.favorite = !connection.favorite
+                            Storage.updateConnection(connection)
+                            historyModel.set(index, connection)
+                        }
+                    }
+                }
+
+                Column {
+
+                    id: removeItemCollumn
+                    visible:_editHistory
+                    width:50
+                    anchors.right: parent.right
+                    Button {
+                        id: removeButton
+                        iconSource:"../icons/close.svg"
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible:_editHistory
+                                            onClicked: {
+                            var connection = historyModel.get(index)
+                            Storage.removeConnection(connection)
+                            Storage.getConnections(historyModel)
+                        }
+
+                    }
+                }
+
+           }
 
             onPressAndHold: {
-                var connection = historyModel.get(index)
-                connection.favorite = !connection.favorite
-                Storage.updateConnection(connection)
-                historyModel.set(index, connection)
+                _editHistory=!_editHistory
             }
 
             onClicked: {
@@ -257,10 +334,10 @@ Page {
             connectionsPage = Utils.loadObjectByPath("pages/ConnectionsPage.qml", page)
 
         pageStack.push(connectionsPage, {
-                       origin: connection.origin,
-                       destination: connection.destination,
-                       datetime: connection.datetime,
-                       departure: connection.departure,
-                       lockDatetime: connection.datetimeSpecified});
+                           origin: connection.origin,
+                           destination: connection.destination,
+                           datetime: connection.datetime,
+                           departure: connection.departure,
+                           lockDatetime: connection.datetimeSpecified});
     }
 }

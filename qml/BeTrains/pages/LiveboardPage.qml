@@ -9,13 +9,18 @@ Page {
     id: page
     anchors.fill: parent
 
+
     property alias datetime: liveboardModel.datetime
     property alias station: liveboardModel.station
-
+    property alias searchtext: liveboardSearch.searchText
 
     //
     // Contents
     //
+
+    onStatusChanged: {
+        liveboardModel.update(true)
+    }
 
     SearchBox {
         id: liveboardSearch
@@ -40,7 +45,7 @@ Page {
             }
             onOutput: {
                 active = false
-                liveboardModel.station = contents
+                if (searchtext.match(" * ")===true) {   liveboardModel.station =  searchtext.split("/")[0].toString().trim() } else {   liveboardModel.station = searchtext} //contents
                 liveboardModel.update(false)
             }
         }
@@ -71,6 +76,7 @@ Page {
             case XmlListModel.Ready:
                 if (liveboardModel.valid)
                     return qsTr("No results")
+                return ""
                 // Deliberate fall-through
             case XmlListModel.Null:
                 return qsTr("Enter a station")
@@ -98,8 +104,8 @@ Page {
         anchors.centerIn: liveboardView
         visible: if (liveboardModel.status === XmlListModel.Loading) true; else false
         running: true
-        height: liveboardView.height / 10
-        width: height
+      //  height: liveboardView.height / 10 //This causes errors in simulator, however user doesn't notice
+      //  width: height
     }
 
 
@@ -114,25 +120,31 @@ Page {
         property date datetime: new Date()
 
         function update(forceReload) {
+            datetime= new Date()
+
             if (station !== "") {
-                source = "http://data.irail.be/NMBS/Liveboard/" + station + "/" + Utils.generateDateUrl(datetime) + ".xml"
+                source = "http://api.irail.be/liveboard/?station=" + station +
+                        "&date="+ Utils.generateAPIDateUrl(datetime)+"&time="+Utils.generateAPITimeUrl(datetime)+ "&fast=true"
 
                 // If the URL is identical, force a reload
                 if (forceReload && status === XmlListModel.Ready)
-                    reload()
+                      console.log("source:"+source)
+                                  reload()
             }
         }
 
         property bool valid
         valid: if (station !== "" && status === XmlListModel.Ready) true; else false;
 
-        query: "/liveboard/Liveboard/departures"
 
-        XmlRole { name: "destination"; query: "direction/string()"; isKey: true}
-        XmlRole { name: "time"; query: "time/number()"; isKey: true }
-        XmlRole { name: "vehicle"; query: "vehicle/string()"; isKey: true }
-        XmlRole { name: "delay"; query: "delay/number()" }
-        XmlRole { name: "platform"; query: "platform/name/string()" }
+      query: "/liveboard/departures/departure"
+
+              XmlRole { name: "destination"; query: "station/string()"; isKey: true}
+              XmlRole { name: "time"; query: "time/number()"; isKey: true }
+              XmlRole { name: "vehicle"; query: "vehicle/string()"; isKey: true }
+              XmlRole { name: "delay"; query: "@delay/number()" }
+              XmlRole { name: "isLeft"; query: "@left/number()" }
+              XmlRole { name: "platform"; query: "platform/string()" }
     }
 
     Component {
@@ -150,7 +162,8 @@ Page {
                     id: stationText
                     mode: item.mode
                     role: "Title"
-                    text: destination
+                    text: Utils.removeNMBSSNCB(destination)
+                    color:  if (isLeft === 0) "white"; else "grey"
                 }
                 ListItemText {
                     id: platformText
@@ -183,7 +196,7 @@ Page {
                     mode: item.mode
                     role: "SubTitle"
                     visible: if (delay > 0) true; else false
-                    text: "+" + Utils.readableDuration(delay)
+                    text:  Utils.readableDelay(delay)
                 }
             }
 
