@@ -154,6 +154,7 @@ Page {
             id: item
             subItemIndicator: true
 
+
             Column {
                 anchors.fill: item.paddingItem
                 id: column1
@@ -182,6 +183,7 @@ Page {
                     rightMargin: platformStyle.graphicSizeSmall + platformStyle.paddingSmall
                 }
                 width: Math.max(timeText.width, delayText.width)
+
                 ListItemText {
                     id: timeText
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -201,7 +203,7 @@ Page {
             }
 
             onClicked: {
-                if (!vehiclePage)
+               if (!vehiclePage)
                     vehiclePage = Utils.loadObjectByPath("pages/VehiclePage.qml", page)
                 pageStack.push(vehiclePage, {id: vehicle, datetime: Utils.getDateTime(time)});
             }

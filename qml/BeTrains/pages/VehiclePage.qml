@@ -120,6 +120,7 @@ property alias stationname:vehicleModel.stationname
 
         ListItem {
             id: item
+
             Column {
                 anchors.fill: item.paddingItem
                 id: column1

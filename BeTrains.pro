@@ -83,10 +83,10 @@ PRE_TARGETDEPS += compiler_TSQM_make_all
 evilhack {
     SOURCES += \
         qml/BeTrains/main.qml \
+        qml/BeTrains/pages/ViaPage.qml \
         qml/BeTrains/pages/VehiclePage.qml \
         qml/BeTrains/pages/TravelPage.qml \
         qml/BeTrains/pages/ConnectionsPage.qml \
-        qml/BeTrains/pages/ViaPage.qml \
         qml/BeTrains/pages/LiveboardPage.qml \
         qml/BeTrains/components/AboutDialog.qml \
         qml/BeTrains/components/TravelTimeDialog.qml \
@@ -98,3 +98,5 @@ evilhack {
 # Resourcess
 RESOURCES += \
     BeTrains.qrc
+
+

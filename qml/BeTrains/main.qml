@@ -98,6 +98,7 @@ import QtQuick 1.0
         Menu {
             id: menu
             content: MenuLayout {
+
                 // About
                 MenuItem {
                     text: qsTr("About")

@@ -1,6 +1,0 @@
-*.pro.user
-*~
-bin/
-obj/
-Makefile
-qrc_*.cpp
